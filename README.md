@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Genesis Network — website
 
-## Getting Started
+Front-end mockup for **Genesis Network Indonesia**, an independent financial media brand
+covering crypto, stocks, and macroeconomics for Indonesian readers aged 18–35.
 
-First, run the development server:
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4. No backend — all
+content lives in typed local data files, shaped to match the Payload collections that
+will replace them.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev     # http://localhost:3000
+npm run build   # 27 static pages
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Design system
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Everything derives from the `gn.` mark.
 
-## Learn More
+| Token | Value | Use |
+| --- | --- | --- |
+| `volt-500` | `#005FF7` | The brand blue, sampled from the logo. Used as an accent only. |
+| `volt-400` | `#3D86FF` | Hover / serif-italic accents |
+| `ink-950` | `#050507` | Page canvas |
+| `bone-*` | greys | Text ramp, `bone-50` brightest |
+| `bull` / `bear` | green / red | Market direction only |
 
-To learn more about Next.js, take a look at the following resources:
+**The colour rule:** the site is roughly 95% monochrome. Blue marks one thing per view —
+the accent phrase in a headline, an active state, a live dot. When blue is everywhere it
+stops meaning anything.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Type:** Plus Jakarta Sans (display + UI), Instrument Serif italic (the one editorial
+flourish, used for the payoff phrase in a headline), JetBrains Mono (eyebrows, dates,
+figures). Utilities live in `globals.css`: `.u-display`, `.u-accent`, `.u-eyebrow`,
+`.u-num`, `.u-panel`, `.u-grid-field`, `.u-noise`, `.u-reveal`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+  app/
+    page.tsx                          Home — hero, ticker, articles, series, research, founders, partnership
+    artikel/                          index · kategori/[category] · [slug]
+    research/                         index · kategori/[category] · [slug]
+    partnership/                      media kit, formats, case study, targets, inquiry form
+    about/                            objective, purpose, principles, team
+  components/
+    layout/     Header, Footer, PageHero
+    home/       Hero, Ticker, LatestArticles, SeriesStrip, ResearchTeaser, Founders, PartnershipTeaser
+    article/    ArticleCard (card / lead / row), CategoryTabs, Prose
+    research/   ReportCard
+    partnership/InquiryForm
+    ui/         primitives.tsx, Reveal.tsx
+  data/         types.ts, articles.ts, research.ts, site.ts, index.ts
+public/
+  brand/        gn-tile.png, gn-mark.png   (extracted from the supplied logo)
+  media/        14 post images from the deck, as webp @1200px + @640px
+_brief/         the original .docx and logo screenshot
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Content
+
+The mockup runs on **real Genesis content**, not placeholder text. The 14 post images from
+the deck were extracted, converted to webp, and used as article covers; their headlines
+became the articles. The three named series — **Chain Horizon**, **Equity Voyage**,
+**Genesis Unscripted** — drive the site's information architecture.
+
+The four Tokocrypto tokenized-stocks posts are deliberately kept **out** of the article
+feed and used as the branded-campaign case study on `/partnership`, which is what they
+actually were.
+
+Instagram figures on `/partnership` and `/about` (12,315 views · 2,408 reached · 385
+interactions · 739 profile visits) come from the deck's 30-day snapshot and are labelled
+as such.
+
+### Still to replace
+
+- **Founder names and photos** — `src/data/site.ts` has three role-first placeholders
+  (`Nama Founder`, etc.) marked with a `TODO`. Nothing about real people was invented.
+- **Market ticker** — `instruments` in `site.ts` is static and labelled *"data ilustratif"*
+  in the UI. Swap for a live feed when there is one.
+- **Inquiry form** — posts nowhere; it shows a "not connected yet" state and points at the
+  partnership email.
+
+---
+
+## Moving to Payload
+
+The data layer was built for this. Every read in the app goes through `src/data/index.ts`
+— no component imports an array directly.
+
+1. The interfaces in `src/data/types.ts` (`Article`, `ResearchReport`, `Category`,
+   `Series`, `Founder`) are the collection schemas. `Block` is the rich-text block union
+   that `Prose.tsx` renders.
+2. Replace the bodies of `getArticles`, `getArticle`, `getReports`, `getReport` in
+   `src/data/index.ts` with `payload.find({ collection: '...' })` and make them `async`.
+3. Add `await` at the ~10 call sites in `src/app/**/page.tsx`. Components are untouched.
+4. `generateStaticParams` in the `[slug]` routes becomes an async Payload query.
+
+Because `Prose` switches exhaustively over the `Block` union, adding a block type in
+Payload surfaces as a TypeScript error here rather than a blank space on the page.
+
+---
+
+## Notes
+
+- All content is Indonesian; navigation labels stay English (`Home / Artikel / Free
+  Research / Partnership / About Us`) to match the brand's existing convention.
+- Free Research is currently open — full reports, no email gate. `ResearchReport.pages`
+  is already in the schema if a gated PDF download is added later.
+- Every page carries the disclaimer that content is educational and not investment advice.
+- Scroll reveals, the marquee, and the live dot all respect `prefers-reduced-motion`.

@@ -1,26 +1,205 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================
+   GENESIS NETWORK — design tokens
+   Palette sampled from the gn. mark: #005FF7 on pure black.
+   Discipline: the site is ~95% monochrome. Blue is an event,
+   not a decoration.
+   ============================================================ */
+
+@theme {
+  /* ink — near-black canvas, never pure #000 except for the mark */
+  --color-ink-950: #050507;
+  --color-ink-900: #0a0a0d;
+  --color-ink-850: #0e0e12;
+  --color-ink-800: #131318;
+  --color-ink-700: #1c1c23;
+  --color-ink-600: #2a2a33;
+
+  /* text */
+  --color-bone-50: #f7f7f8;
+  --color-bone-100: #eaeaee;
+  --color-bone-200: #d8d8dd;
+  --color-bone-300: #b9b9c2;
+  --color-bone-400: #9a9aa5;
+  --color-bone-500: #6f6f7b;
+  --color-bone-600: #52525c;
+  --color-bone-700: #3a3a43;
+
+  /* brand */
+  --color-volt-400: #3d86ff;
+  --color-volt-500: #005ff7;
+  --color-volt-600: #0049c4;
+
+  /* market semantics */
+  --color-bull: #16c47f;
+  --color-bear: #ff4d5e;
+
+  --font-display: var(--font-display), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-serif: var(--font-serif), "Instrument Serif", Georgia, serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  * {
+    border-color: color-mix(in oklab, var(--color-bone-50) 8%, transparent);
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    background: var(--color-ink-950);
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-ink-950);
+    color: var(--color-bone-200);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-volt-500);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--color-ink-950); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-ink-700);
+    border: 3px solid var(--color-ink-950);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-ink-600); }
+
+  :focus-visible {
+    outline: 2px solid var(--color-volt-500);
+    outline-offset: 3px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Display type: tight, optical, confident. */
+  .u-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+    text-wrap: balance;
+  }
+
+  .u-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Editorial italic accent — the one flourish, used sparingly. */
+  .u-accent {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: -0.01em;
+  }
+
+  .u-rule {
+    background-image: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-bone-50) 14%, transparent),
+      transparent
+    );
+    height: 1px;
+  }
+
+  /* Hairline surface used for every card in the system. */
+  .u-panel {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--color-bone-50) 4%, transparent),
+        transparent 42%
+      ),
+      var(--color-ink-900);
+    border: 1px solid color-mix(in oklab, var(--color-bone-50) 8%, transparent);
+  }
+
+  .u-grid-field {
+    background-image:
+      linear-gradient(color-mix(in oklab, var(--color-bone-50) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--color-bone-50) 4%, transparent) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  .u-noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .u-mask-fade-b {
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+
+  .u-mask-fade-x {
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .u-num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ---------- motion ---------- */
+
+@keyframes gn-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+.u-marquee > * {
+  animation: gn-marquee 46s linear infinite;
+}
+
+@keyframes gn-sheen {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(320%); }
+}
+
+@keyframes gn-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(0.82); }
+}
+
+.u-live-dot { animation: gn-pulse-dot 2.4s var(--ease-out-expo) infinite; }
+
+/* Scroll reveal — driven by IntersectionObserver in <Reveal>. */
+.u-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.u-reveal[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .u-reveal { opacity: 1; transform: none; transition: none; }
+  .u-marquee > *, .u-live-dot { animation: none; }
 }
