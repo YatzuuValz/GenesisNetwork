@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { withBasePath } from "@/components/ui/Img";
 import { site } from "@/data";
 import "./globals.css";
 
@@ -49,7 +50,10 @@ export const metadata: Metadata = {
     title: `${site.name} — Crypto · Saham · Makro`,
     description: site.description,
   },
-  icons: { icon: "/brand/gn-tile.png", apple: "/brand/gn-tile.png" },
+  icons: {
+    icon: withBasePath("/brand/gn-tile.png"),
+    apple: withBasePath("/brand/gn-tile.png"),
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

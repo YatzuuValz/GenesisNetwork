@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "@/components/ui/Img";
 import Link from "next/link";
 import { categories, site } from "@/data";
 import { Arrow, Bloom } from "@/components/ui/primitives";

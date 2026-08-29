@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Image from "@/components/ui/Img";
 import { audienceStats, founders, seriesList, site } from "@/data";
 import PageHero from "@/components/layout/PageHero";
 import { Arrow, Bloom, ButtonLink, Eyebrow, StatBlock } from "@/components/ui/primitives";

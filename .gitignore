@@ -42,3 +42,6 @@ next-env.d.ts
 
 # source brief (kept locally, not tracked)
 /_brief
+
+# static export output
+/out

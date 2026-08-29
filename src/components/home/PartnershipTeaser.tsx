@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "@/components/ui/Img";
 import { audienceStats, caseStudyAssets, revenueStreams } from "@/data";
 import { Bloom, ButtonLink, Eyebrow, StatBlock } from "@/components/ui/primitives";
 import Reveal from "@/components/ui/Reveal";

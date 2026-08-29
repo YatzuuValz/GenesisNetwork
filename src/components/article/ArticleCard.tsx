@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "@/components/ui/Img";
 import Link from "next/link";
 import { formatDateID, getSeries, type Article } from "@/data";
 import { Arrow, Pill } from "@/components/ui/primitives";
