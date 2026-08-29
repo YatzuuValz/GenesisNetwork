@@ -40,7 +40,11 @@ jobs:
       # Without this, Pages runs Jekyll and drops the _next/ directory.
       - run: touch out/.nojekyll
 
+      # enablement:true provisions the Pages site over the API if it doesn't
+      # exist yet, so the first deploy can't lose the race with the UI toggle.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
