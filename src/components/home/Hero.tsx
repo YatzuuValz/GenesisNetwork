@@ -43,7 +43,7 @@ export default function Hero() {
               <p className="text-bone-400 mt-8 max-w-[34rem] text-[1.0625rem] leading-relaxed">
                 Crypto, saham, dan makroekonomi untuk generasi yang tumbuh bareng grafik harga.
                 Kami baca datanya, buang jargonnya, dan tulis ulang jadi sesuatu yang benar-benar
-                bisa kamu pakai — tujuh konten tiap minggu di Instagram.
+                bisa kamu pakai — tujuh konten tiap minggu, dari Instagram sampai YouTube.
               </p>
             </Reveal>
 

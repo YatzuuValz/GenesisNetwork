@@ -128,7 +128,7 @@ export default function AboutPage() {
           </h2>
         </Reveal>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-3">
+        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {founders.map((f, i) => (
             <Reveal key={f.role} delay={i * 90}>
               <div className="u-panel group flex h-full flex-col rounded-2xl p-8 transition-colors duration-500 hover:border-white/20">
@@ -158,8 +158,8 @@ export default function AboutPage() {
                   Tujuh konten setiap minggu
                 </h2>
                 <p className="text-bone-400 mt-6 text-[0.95rem] leading-relaxed">
-                  Dirotasi lewat empat program tetap di Instagram, TikTok, dan YouTube. Jadwalnya
-                  konsisten supaya pembaca tahu kapan harus kembali.
+                  Dibagi ke empat program di Instagram, TikTok, dan YouTube — dengan Instagram
+                  sebagai kanal utama.
                 </p>
                 <div className="mt-9">
                   <ButtonLink href="/#karya">Lihat karyanya</ButtonLink>

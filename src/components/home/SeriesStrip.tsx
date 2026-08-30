@@ -16,13 +16,13 @@ export default function SeriesStrip() {
             <div>
               <Eyebrow>Program tetap</Eyebrow>
               <h2 className="u-display text-bone-50 mt-4 text-[clamp(1.5rem,3vw,2.2rem)]">
-                Empat format, jadwal yang{" "}
-                <span className="u-accent text-volt-400 font-normal">tidak bergeser</span>
+                Empat program, empat{" "}
+                <span className="u-accent text-volt-400 font-normal">sudut pandang</span>
               </h2>
             </div>
             <p className="text-bone-500 max-w-sm text-sm leading-relaxed">
-              Tujuh konten setiap minggu, dirotasi lewat empat program yang punya sudut pandang
-              masing-masing.
+              Tujuh konten setiap minggu, dibagi ke empat program dengan cara baca yang
+              berbeda-beda.
             </p>
           </div>
         </Reveal>

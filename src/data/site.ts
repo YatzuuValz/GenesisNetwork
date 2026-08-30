@@ -37,6 +37,26 @@ export const features = {
   research: false,
 } as const;
 
+/**
+ * Genesis publishes on three channels. Instagram is the primary one — the other
+ * two are active but secondary.
+ */
+export const channels = [
+  { label: "Instagram", handle: site.instagramHandle, href: site.instagram, primary: true },
+  {
+    label: "TikTok",
+    handle: site.tiktokHandle,
+    href: "https://www.tiktok.com/@genesisnetwork.id",
+    primary: false,
+  },
+  {
+    label: "YouTube",
+    handle: site.youtubeHandle,
+    href: "https://www.youtube.com/@genesisnetwork",
+    primary: false,
+  },
+];
+
 export const categories: Category[] = [
   {
     slug: "crypto",
@@ -61,20 +81,24 @@ export const categories: Category[] = [
   },
 ];
 
+/**
+ * `format` describes the medium only. The deck states a total of 7 posts a week
+ * but never a per-series cadence — do not add one here without a real number.
+ */
 export const seriesList: Series[] = [
   {
     slug: "chain-horizon",
     name: "Chain Horizon",
     category: "crypto",
-    format: "Carousel · 2× seminggu",
+    format: "Carousel · Crypto",
     blurb:
-      "Pembacaan mingguan atas pergerakan on-chain, dari infrastruktur pembayaran sampai narasi yang sedang dihargai pasar.",
+      "Pembacaan pergerakan on-chain, dari infrastruktur pembayaran sampai narasi yang sedang dihargai pasar.",
   },
   {
     slug: "equity-voyage",
     name: "Equity Voyage",
     category: "saham",
-    format: "Carousel · 2× seminggu",
+    format: "Carousel · Saham",
     blurb:
       "Bursa Indonesia dan pasar global, dibaca lewat aliran dana — bukan lewat headline.",
   },
@@ -82,7 +106,7 @@ export const seriesList: Series[] = [
     slug: "genesis-unscripted",
     name: "Genesis Unscripted",
     category: "mixed",
-    format: "Video · 1× seminggu",
+    format: "Video · Wawancara",
     blurb:
       "Turun ke jalan, bertanya soal uang ke orang sungguhan. Tanpa naskah, tanpa jawaban yang sudah disiapkan.",
   },
@@ -90,16 +114,16 @@ export const seriesList: Series[] = [
     slug: "genesis-rankings",
     name: "Genesis Rankings",
     category: "mixed",
-    format: "Riset · bulanan",
+    format: "Riset berkala",
     blurb:
       "Peringkat aset dan sektor yang kami susun sendiri, dengan metodologi yang dibuka penuh ke pembaca.",
   },
 ];
 
 /**
- * TODO(genesis): replace with the real founding team — names, roles, photos.
- * Left as role-first placeholders on purpose; nothing here is invented about
- * real people.
+ * TODO(genesis): four people confirmed, but names and photos are still pending —
+ * and the role split below is my guess, not something Genesis stated. Correct
+ * both. Nothing here is invented about a real, identifiable person.
  */
 export const founders: Founder[] = [
   {
@@ -121,7 +145,14 @@ export const founders: Founder[] = [
     role: "Co-Founder & Creative Director",
     initials: "03",
     bio: "Menerjemahkan riset jadi bahasa visual yang berhenti di jempol orang — tanpa mengorbankan akurasi isinya.",
-    focus: "Visual · Produksi",
+    focus: "Visual · Desain",
+  },
+  {
+    name: "Nama Co-Founder",
+    role: "Co-Founder & Head of Video",
+    initials: "04",
+    bio: "Memimpin produksi Genesis Unscripted, dari menyusun pertanyaan sampai memastikan jawaban yang jujur tetap utuh saat diedit.",
+    focus: "Video · Produksi",
   },
 ];
 

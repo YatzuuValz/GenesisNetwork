@@ -21,7 +21,7 @@ export default function ArtikelIndexPage() {
         accent="masih kami masak."
         lead="Kami sedang menyiapkan versi tulisan dari apa yang selama ini kami bahas di Instagram — crypto, saham, dan makro, dengan ruang yang cukup untuk menjelaskan sampai tuntas."
         bullets={[
-          { label: "Chain Horizon", detail: "Pembacaan mingguan atas pergerakan on-chain dan narasi yang sedang dihargai pasar." },
+          { label: "Chain Horizon", detail: "Pembacaan pergerakan on-chain dan narasi yang sedang dihargai pasar." },
           { label: "Equity Voyage", detail: "Bursa Indonesia dan pasar global, dibaca lewat aliran dana — bukan lewat headline." },
           { label: "Genesis Unscripted", detail: "Percakapan soal uang dengan orang sungguhan, tanpa naskah." },
         ]}

@@ -1,6 +1,6 @@
 import Image from "@/components/ui/Img";
 import Link from "next/link";
-import { categories, features, site } from "@/data";
+import { categories, channels, features, site } from "@/data";
 import { Arrow, Bloom } from "@/components/ui/primitives";
 
 /** Category links would land on empty pages while a section is switched off. */
@@ -28,12 +28,6 @@ const columns = [
       { label: "Media Kit", href: "/partnership#formats" },
     ],
   },
-];
-
-const socials = [
-  { label: "Instagram", href: site.instagram, handle: site.instagramHandle },
-  { label: "TikTok", href: "https://www.tiktok.com/@genesisnetwork.id", handle: site.tiktokHandle },
-  { label: "YouTube", href: "https://www.youtube.com/@genesisnetwork", handle: site.youtubeHandle },
 ];
 
 export default function Footer() {
@@ -66,7 +60,7 @@ export default function Footer() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2.5">
-              {socials.map((s) => (
+              {channels.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}

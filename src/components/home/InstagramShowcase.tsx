@@ -1,5 +1,5 @@
 import Image from "@/components/ui/Img";
-import { audienceStats, instagramPosts, seriesList, site } from "@/data";
+import { audienceStats, channels, instagramPosts, seriesList, site } from "@/data";
 import { Arrow, Bloom, Eyebrow } from "@/components/ui/primitives";
 import Reveal from "@/components/ui/Reveal";
 
@@ -23,14 +23,40 @@ export default function InstagramShowcase() {
             <div className="max-w-2xl">
               <Eyebrow dot>Karya kami</Eyebrow>
               <h2 className="u-display text-bone-50 mt-5 text-[clamp(2rem,4.6vw,3.4rem)]">
-                Semuanya hidup di
+                Tujuh konten tiap minggu.
                 <br />
-                <span className="u-accent text-volt-400 font-normal">Instagram — dulu.</span>
+                <span className="u-accent text-volt-400 font-normal">Rumah utamanya Instagram.</span>
               </h2>
               <p className="text-bone-400 mt-6 max-w-xl text-[0.975rem] leading-relaxed">
-                Situs ini masih muda, tapi kontennya tidak. Tujuh unggahan tiap minggu, tiga program
-                tetap, dan penjelasan yang kami tulis ulang sampai benar-benar sederhana.
+                Kami juga terbit di TikTok dan YouTube, tapi Instagram yang paling hidup — di sana
+                percakapannya terjadi. Semua di bawah ini karya kami sendiri.
               </p>
+
+              <ul className="mt-7 flex flex-wrap gap-2.5">
+                {channels.map((c) => (
+                  <li key={c.label}>
+                    <a
+                      href={c.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`group flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs transition-all duration-300 ${
+                        c.primary
+                          ? "border-volt-500/40 bg-volt-500/10 text-bone-100 hover:border-volt-500"
+                          : "text-bone-400 hover:text-bone-100 border-white/10 hover:border-white/25"
+                      }`}
+                    >
+                      {c.label}
+                      <span
+                        className={
+                          c.primary ? "text-volt-400 text-[0.6875rem]" : "text-bone-600 text-[0.6875rem]"
+                        }
+                      >
+                        {c.primary ? "utama" : c.handle}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <a
