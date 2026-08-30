@@ -138,9 +138,15 @@ export default function AboutPage() {
                 <h3 className="u-display text-bone-50 mt-7 text-xl">{f.name}</h3>
                 <div className="u-eyebrow text-volt-400 mt-2.5 text-[0.5625rem]">{f.role}</div>
                 <p className="text-bone-400 mt-5 flex-1 text-[0.875rem] leading-relaxed">{f.bio}</p>
-                <div className="u-eyebrow text-bone-600 mt-7 border-t border-white/[0.07] pt-5 text-[0.5rem]">
-                  {f.focus}
-                </div>
+                <a
+                  href={f.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group text-bone-600 hover:text-volt-400 mt-7 flex items-center justify-between border-t border-white/[0.07] pt-5 text-[0.5rem] transition-colors"
+                >
+                  <span className="u-eyebrow">{f.focus}</span>
+                  <span className="u-eyebrow">LinkedIn</span>
+                </a>
               </div>
             </Reveal>
           ))}

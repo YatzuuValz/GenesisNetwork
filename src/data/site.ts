@@ -20,8 +20,8 @@ export const site = {
     "Media finansial independen untuk generasi muda Indonesia. Crypto, saham, dan makroekonomi — dijelaskan sederhana, jujur, dan tanpa jargon.",
   instagram: "https://www.instagram.com/genesisnetwork.id/",
   instagramHandle: "@genesisnetwork.id",
-  tiktokHandle: "@genesisnetwork.id",
-  youtubeHandle: "@genesisnetwork",
+  tiktokHandle: "@genesisnetworkid",
+  youtubeHandle: "@GenesisNetworkID",
   email: "hello@genesisnetwork.id",
   partnershipEmail: "partnership@genesisnetwork.id",
   city: "Jakarta, Indonesia",
@@ -46,13 +46,13 @@ export const channels = [
   {
     label: "TikTok",
     handle: site.tiktokHandle,
-    href: "https://www.tiktok.com/@genesisnetwork.id",
+    href: "https://www.tiktok.com/@genesisnetworkid",
     primary: false,
   },
   {
     label: "YouTube",
     handle: site.youtubeHandle,
-    href: "https://www.youtube.com/@genesisnetwork",
+    href: "https://www.youtube.com/@GenesisNetworkID",
     primary: false,
   },
 ];
@@ -121,40 +121,58 @@ export const seriesList: Series[] = [
 ];
 
 /**
- * TODO(genesis): four people confirmed, but names and photos are still pending —
- * and the role split below is my guess, not something Genesis stated. Correct
- * both. Nothing here is invented about a real, identifiable person.
+ * All four are co-founders with equal standing — no single "Founder", by their
+ * own description of how the team works.
+ *
+ * Names are taken from the LinkedIn slugs and the photo filenames Genesis
+ * supplied; photos are their own LinkedIn portraits, provided for this use.
+ * TODO(genesis): confirm the spelling of "Viandi" — the file is named "vian"
+ * and the slug is "viandi", so it could be two words. Bios are placeholder copy.
  */
 export const founders: Founder[] = [
   {
-    name: "Nama Founder",
-    role: "Founder & Editor-in-Chief",
-    initials: "01",
-    bio: "Menentukan arah editorial dan menjaga standar yang sama untuk setiap konten: kalau kami tidak bisa menjelaskannya dengan sederhana, kami belum cukup paham.",
+    name: "Raid Agil",
+    role: "Co-Founder",
+    initials: "RA",
     focus: "Editorial · Crypto",
+    linkedin: "https://www.linkedin.com/in/raidagil/",
+    photo: "/team/raid-agil.webp",
+    thumb: "/team/raid-agil-sm.webp",
+    bio: "Menentukan arah editorial dan menjaga standar yang sama untuk setiap konten: kalau kami tidak bisa menjelaskannya dengan sederhana, kami belum cukup paham.",
   },
   {
-    name: "Nama Co-Founder",
-    role: "Co-Founder & Head of Research",
-    initials: "02",
-    bio: "Menyusun kerangka riset dan metodologi Genesis Rankings, memastikan setiap angka yang kami terbitkan bisa ditelusuri sumbernya.",
+    name: "Viandi",
+    role: "Co-Founder",
+    initials: "VI",
     focus: "Riset · Saham & Makro",
+    linkedin: "https://www.linkedin.com/in/viandi/",
+    photo: "/team/viandi.webp",
+    thumb: "/team/viandi-sm.webp",
+    bio: "Menyusun kerangka riset dan metodologi Genesis Rankings, memastikan setiap angka yang kami terbitkan bisa ditelusuri sumbernya.",
   },
   {
-    name: "Nama Co-Founder",
-    role: "Co-Founder & Creative Director",
-    initials: "03",
+    name: "Yahya Muhandar Fathana",
+    role: "Co-Founder",
+    initials: "YM",
+    focus: "Visual · Produksi",
+    linkedin: "https://www.linkedin.com/in/yahya-muhandar-fathana-2084b92b2/",
+    photo: "/team/yahya.webp",
+    thumb: "/team/yahya-sm.webp",
     bio: "Menerjemahkan riset jadi bahasa visual yang berhenti di jempol orang — tanpa mengorbankan akurasi isinya.",
-    focus: "Visual · Desain",
   },
   {
-    name: "Nama Co-Founder",
-    role: "Co-Founder & Head of Video",
-    initials: "04",
+    name: "Rieka Handayani",
+    role: "Co-Founder",
+    initials: "RH",
+    focus: "Video · Distribusi",
+    linkedin: "https://www.linkedin.com/in/riekahandayani/",
+    photo: "/team/rieka.webp",
+    thumb: "/team/rieka-sm.webp",
     bio: "Memimpin produksi Genesis Unscripted, dari menyusun pertanyaan sampai memastikan jawaban yang jujur tetap utuh saat diedit.",
-    focus: "Video · Produksi",
   },
 ];
+
+export const teamPhoto: string | undefined = undefined;
 
 /**
  * Live quotes, fetched at build time by scripts/fetch-market.mjs. The crypto
@@ -219,20 +237,40 @@ export const caseStudyAssets: CaseStudyAsset[] = [
  * permalinks when they're available.
  */
 export const instagramPosts: InstagramPost[] = [
-  { src: "/media/cz-ai-agents.webp", thumb: "/media/cz-ai-agents-sm.webp", caption: "CZ prediksi AI agents segera tangani pembayaran crypto", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/msci-status-ri.webp", thumb: "/media/msci-status-ri-sm.webp", caption: "MSCI umumkan status RI Juni ini", series: "equity-voyage", aspect: "4/5" },
-  { src: "/media/unscripted-orang-kaya.webp", thumb: "/media/unscripted-orang-kaya-sm.webp", caption: "Menurut kalian orang ini beneran kaya?", series: "genesis-unscripted", aspect: "9/16" },
-  { src: "/media/tokoh-berpengaruh-kripto.webp", thumb: "/media/tokoh-berpengaruh-kripto-sm.webp", caption: "5 orang berpengaruh di industri kripto", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/elon-musk-200-miliar.webp", thumb: "/media/elon-musk-200-miliar-sm.webp", caption: "Elon Musk kehilangan $200 miliar dalam 2 hari", series: "equity-voyage", aspect: "4/5" },
-  { src: "/media/saham-global-onchain.webp", thumb: "/media/saham-global-onchain-sm.webp", caption: "Saham global kini bisa on-chain?", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/unscripted-ferry-irwandi.webp", thumb: "/media/unscripted-ferry-irwandi-sm.webp", caption: "Apa arti cukup dalam investasi menurut Ferry Irwandi?", series: "genesis-unscripted", aspect: "9/16" },
-  { src: "/media/apa-itu-tokenized-stocks.webp", thumb: "/media/apa-itu-tokenized-stocks-sm.webp", caption: "Apa itu tokenized stocks?", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/waktu-kunci-investasi.webp", thumb: "/media/waktu-kunci-investasi-sm.webp", caption: "Waktu menjadi kunci dalam investasi", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/pasar-24-jam.webp", thumb: "/media/pasar-24-jam-sm.webp", caption: "Bayangin kamu mau belanja tapi tokonya malah tutup", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/tokocrypto-teaser.webp", thumb: "/media/tokocrypto-teaser-sm.webp", caption: "Segera hadir di Tokocrypto", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/tokocrypto-launch.webp", thumb: "/media/tokocrypto-launch-sm.webp", caption: "Trade tokenized stocks di Tokocrypto sekarang", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/tokocrypto-pilihan-24jam.webp", thumb: "/media/tokocrypto-pilihan-24jam-sm.webp", caption: "Tokenized stock tersedia 24 jam di Tokocrypto", series: "chain-horizon", aspect: "4/5" },
-  { src: "/media/tokenized-hits-different.webp", thumb: "/media/tokenized-hits-different-sm.webp", caption: "Tokenized stocks hits different", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/cz-ai-agents.webp", thumb: "/media/cz-ai-agents-sm.webp", caption: "CZ prediksi AI agents segera tangani pembayaran crypto", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/msci-status-ri.webp", thumb: "/media/msci-status-ri-sm.webp", caption: "MSCI umumkan status RI Juni ini", series: "equity-voyage", aspect: "4/5", kind: "post" },
+  {
+    src: "/media/unscripted-orang-kaya.webp",
+    thumb: "/media/unscripted-orang-kaya-sm.webp",
+    caption: "Menurut kalian orang ini beneran kaya?",
+    series: "genesis-unscripted",
+    aspect: "9/16",
+    kind: "reel",
+    top: true,
+    permalink: "https://www.instagram.com/reel/DcJsamQTVvE/",
+  },
+  { src: "/media/tokoh-berpengaruh-kripto.webp", thumb: "/media/tokoh-berpengaruh-kripto-sm.webp", caption: "5 orang berpengaruh di industri kripto", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/elon-musk-200-miliar.webp", thumb: "/media/elon-musk-200-miliar-sm.webp", caption: "Elon Musk kehilangan $200 miliar dalam 2 hari", series: "equity-voyage", aspect: "4/5", kind: "post" },
+  { src: "/media/saham-global-onchain.webp", thumb: "/media/saham-global-onchain-sm.webp", caption: "Saham global kini bisa on-chain?", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  {
+    src: "/media/unscripted-ferry-irwandi.webp",
+    thumb: "/media/unscripted-ferry-irwandi-sm.webp",
+    caption: "Apa arti cukup dalam investasi menurut Ferry Irwandi?",
+    series: "genesis-unscripted",
+    aspect: "9/16",
+    kind: "reel",
+    top: true,
+    // TODO(genesis): confirm this is reel DcEF83HBP5F — matched on "gambar
+    // dengan tulisan", which fits both reels we have.
+    permalink: "https://www.instagram.com/reel/DcEF83HBP5F/",
+  },
+  { src: "/media/apa-itu-tokenized-stocks.webp", thumb: "/media/apa-itu-tokenized-stocks-sm.webp", caption: "Apa itu tokenized stocks?", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/waktu-kunci-investasi.webp", thumb: "/media/waktu-kunci-investasi-sm.webp", caption: "Waktu menjadi kunci dalam investasi", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/pasar-24-jam.webp", thumb: "/media/pasar-24-jam-sm.webp", caption: "Bayangin kamu mau belanja tapi tokonya malah tutup", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/tokocrypto-teaser.webp", thumb: "/media/tokocrypto-teaser-sm.webp", caption: "Segera hadir di Tokocrypto", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/tokocrypto-launch.webp", thumb: "/media/tokocrypto-launch-sm.webp", caption: "Trade tokenized stocks di Tokocrypto sekarang", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/tokocrypto-pilihan-24jam.webp", thumb: "/media/tokocrypto-pilihan-24jam-sm.webp", caption: "Tokenized stock tersedia 24 jam di Tokocrypto", series: "chain-horizon", aspect: "4/5", kind: "post" },
+  { src: "/media/tokenized-hits-different.webp", thumb: "/media/tokenized-hits-different-sm.webp", caption: "Tokenized stocks hits different", series: "chain-horizon", aspect: "4/5", kind: "post" },
 ];
 
 /** Numbers from the deck's 30-day Instagram snapshot (first two weeks live). */

@@ -81,6 +81,11 @@ export interface Founder {
   initials: string;
   bio: string;
   focus: string;
+  linkedin: string;
+  /** Rendered when set; falls back to the initials monogram. */
+  photo?: string;
+  /** Smaller crop for the roster rows. */
+  thumb?: string;
 }
 
 export interface Instrument {
@@ -111,6 +116,12 @@ export interface InstagramPost {
   caption: string;
   series: SeriesSlug;
   aspect: "4/5" | "9/16";
+  /** Reels are vertical video; posts are the 4:5 feed carousels. */
+  kind: "reel" | "post";
+  /** Public permalink. Falls back to the profile when absent. */
+  permalink?: string;
+  /** Surfaced first inside its group. */
+  top?: boolean;
 }
 
 export interface RevenueStream {
