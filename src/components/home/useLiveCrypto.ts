@@ -4,49 +4,120 @@ import { useEffect, useState } from "react";
 import { instruments, type Instrument } from "@/data";
 
 type CoinGeckoRow = { usd?: number; idr?: number; usd_24h_change?: number };
+type PriceMap = Record<string, CoinGeckoRow>;
 
 /**
- * Returns the build-time quotes with the crypto rows refreshed from CoinGecko.
+ * CoinGecko's free endpoint starts returning 429 after roughly three requests in
+ * quick succession from one IP. Two things keep us well under that:
  *
- * CoinGecko is the only source here that can be read from a browser — it sends
- * `access-control-allow-origin: *`. Yahoo (the IDX rows) sends no CORS headers,
- * so those keep whatever scripts/fetch-market.mjs baked in at build time.
+ *  1. Single-flight — every component calling this hook shares one request, so a
+ *     page with both the ticker and the market panel makes one call, not two.
+ *  2. A sessionStorage cache with a short TTL, so reloading the page a few times
+ *     in a row reuses the last response instead of hammering the API.
  *
- * Starts from the baked values so the first paint is already correct; a failed
- * request leaves them untouched rather than blanking the strip.
+ * On failure the build-time quotes stay on screen. They carry a visible "per
+ * HH:MM WIB" timestamp, so an older number is labelled rather than passed off as
+ * current.
  */
+const CACHE_KEY = "gn:crypto";
+const TTL_MS = 60_000;
+const REFRESH_MS = 60_000;
+
+const ENDPOINT = (ids: string) =>
+  `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,idr&include_24hr_change=true`;
+
+/** Shared across every hook instance on the page. */
+let inFlight: Promise<PriceMap | null> | null = null;
+
+function readCache(): PriceMap | null {
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { at, data } = JSON.parse(raw) as { at: number; data: PriceMap };
+    return Date.now() - at < TTL_MS ? data : null;
+  } catch {
+    // Private mode, disabled storage, or malformed entry — just refetch.
+    return null;
+  }
+}
+
+function writeCache(data: PriceMap) {
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), data }));
+  } catch {
+    /* storage unavailable — the in-memory single-flight still helps */
+  }
+}
+
+function fetchPrices(ids: string): Promise<PriceMap | null> {
+  const cached = readCache();
+  if (cached) return Promise.resolve(cached);
+  if (inFlight) return inFlight;
+
+  inFlight = fetch(ENDPOINT(ids))
+    .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+    .then((data: PriceMap) => {
+      writeCache(data);
+      return data;
+    })
+    .catch(() => null)
+    .finally(() => {
+      inFlight = null;
+    });
+
+  return inFlight;
+}
+
+function merge(rows: Instrument[], data: PriceMap): Instrument[] {
+  return rows.map((row) => {
+    const live = row.coinId ? data[row.coinId] : undefined;
+    if (!live || typeof live.usd !== "number") return row;
+    return {
+      ...row,
+      price: live.usd,
+      priceIdr: live.idr ?? row.priceIdr,
+      change: live.usd_24h_change ?? row.change,
+      stale: false,
+    };
+  });
+}
+
 export function useLiveCrypto(): Instrument[] {
   const [rows, setRows] = useState<Instrument[]>(instruments);
 
   useEffect(() => {
-    const ids = instruments.filter((i) => i.coinId).map((i) => i.coinId);
-    if (ids.length === 0) return;
+    const ids = instruments
+      .map((i) => i.coinId)
+      .filter((id): id is string => Boolean(id))
+      .join(",");
+    if (!ids) return;
 
-    const controller = new AbortController();
+    let active = true;
 
-    fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(",")}&vs_currencies=usd,idr&include_24hr_change=true`,
-      { signal: controller.signal },
-    )
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
-      .then((data: Record<string, CoinGeckoRow>) => {
-        setRows((current) =>
-          current.map((row) => {
-            const live = row.coinId ? data[row.coinId] : undefined;
-            if (!live || typeof live.usd !== "number") return row;
-            return {
-              ...row,
-              price: live.usd,
-              priceIdr: live.idr ?? row.priceIdr,
-              change: live.usd_24h_change ?? row.change,
-              stale: false,
-            };
-          }),
-        );
-      })
-      .catch(() => {});
+    const load = () => {
+      fetchPrices(ids).then((data) => {
+        if (active && data) setRows((current) => merge(current, data));
+      });
+    };
 
-    return () => controller.abort();
+    /** Polling only — a hidden tab shouldn't burn requests nobody will read. */
+    const loadIfVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+
+    // The first load always runs: a tab opened in the background (cmd-click, or
+    // a restored session) would otherwise sit on build-time numbers until
+    // focused, and it costs a single cached-or-shared request.
+    load();
+
+    const timer = setInterval(loadIfVisible, REFRESH_MS);
+    document.addEventListener("visibilitychange", loadIfVisible);
+
+    return () => {
+      active = false;
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", loadIfVisible);
+    };
   }, []);
 
   return rows;
