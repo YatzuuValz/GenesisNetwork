@@ -4,12 +4,14 @@ import Image from "@/components/ui/Img";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { categories, site } from "@/data";
+import { categories, features, site } from "@/data";
 import { Arrow } from "@/components/ui/primitives";
 
 interface NavItem {
   label: string;
   href: string;
+  /** Section still switched off in src/data/site.ts — no dropdown, shows a badge. */
+  soon?: boolean;
   children?: { label: string; href: string; blurb: string }[];
 }
 
@@ -18,20 +20,26 @@ const nav: NavItem[] = [
   {
     label: "Artikel",
     href: "/artikel",
-    children: categories.map((c) => ({
-      label: c.navLabel,
-      href: `/artikel/kategori/${c.slug}`,
-      blurb: c.blurb,
-    })),
+    soon: !features.artikel,
+    children: features.artikel
+      ? categories.map((c) => ({
+          label: c.navLabel,
+          href: `/artikel/kategori/${c.slug}`,
+          blurb: c.blurb,
+        }))
+      : undefined,
   },
   {
     label: "Free Research",
     href: "/research",
-    children: categories.map((c) => ({
-      label: `${c.navLabel} Research`,
-      href: `/research/kategori/${c.slug}`,
-      blurb: c.blurb,
-    })),
+    soon: !features.research,
+    children: features.research
+      ? categories.map((c) => ({
+          label: `${c.navLabel} Research`,
+          href: `/research/kategori/${c.slug}`,
+          blurb: c.blurb,
+        }))
+      : undefined,
   },
   { label: "Partnership", href: "/partnership" },
   { label: "About Us", href: "/about" },
@@ -136,6 +144,11 @@ export default function Header() {
                 }`}
               >
                 {item.label}
+                {item.soon && (
+                  <span className="u-eyebrow border-volt-500/35 bg-volt-500/10 text-volt-400 ml-1 rounded-full border px-1.5 py-0.5 text-[0.4375rem] leading-none">
+                    Soon
+                  </span>
+                )}
                 {item.children && (
                   <svg
                     width="9"
@@ -239,6 +252,11 @@ export default function Header() {
                 }`}
               >
                 {item.label}
+                {item.soon && (
+                  <span className="u-eyebrow text-volt-400 ml-3 align-middle text-[0.5rem]">
+                    Soon
+                  </span>
+                )}
               </Link>
               {item.children && (
                 <div className="flex flex-wrap gap-2 pb-4">

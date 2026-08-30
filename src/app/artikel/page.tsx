@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { categories, countByCategory, getArticles, articles as allArticles } from "@/data";
+import { categories, countByCategory, features, getArticles, articles as allArticles } from "@/data";
 import { ArticleCard, LeadArticleCard } from "@/components/article/ArticleCard";
 import CategoryTabs from "@/components/article/CategoryTabs";
+import ComingSoon from "@/components/layout/ComingSoon";
 import PageHero from "@/components/layout/PageHero";
 import Reveal from "@/components/ui/Reveal";
 
@@ -12,6 +13,22 @@ export const metadata: Metadata = {
 };
 
 export default function ArtikelIndexPage() {
+  if (!features.artikel) {
+    return (
+      <ComingSoon
+        eyebrow="Artikel"
+        title="Tulisan panjangnya"
+        accent="masih kami masak."
+        lead="Kami sedang menyiapkan versi tulisan dari apa yang selama ini kami bahas di Instagram — crypto, saham, dan makro, dengan ruang yang cukup untuk menjelaskan sampai tuntas."
+        bullets={[
+          { label: "Chain Horizon", detail: "Pembacaan mingguan atas pergerakan on-chain dan narasi yang sedang dihargai pasar." },
+          { label: "Equity Voyage", detail: "Bursa Indonesia dan pasar global, dibaca lewat aliran dana — bukan lewat headline." },
+          { label: "Genesis Unscripted", detail: "Percakapan soal uang dengan orang sungguhan, tanpa naskah." },
+        ]}
+      />
+    );
+  }
+
   const articles = getArticles();
   const [lead, ...rest] = articles;
 

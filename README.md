@@ -9,7 +9,7 @@ will replace them.
 
 ```bash
 npm run dev     # http://localhost:3000
-npm run build   # 27 static pages
+npm run build   # 12 static pages while Artikel/Research are switched off
 npm run lint
 ```
 
@@ -43,19 +43,21 @@ figures). Utilities live in `globals.css`: `.u-display`, `.u-accent`, `.u-eyebro
 ```
 src/
   app/
-    page.tsx                          Home — hero, ticker, articles, series, research, founders, partnership
+    page.tsx                          Home — hero, ticker, Instagram showcase, series, founders, partnership
     artikel/                          index · kategori/[category] · [slug]
     research/                         index · kategori/[category] · [slug]
     partnership/                      media kit, formats, case study, targets, inquiry form
     about/                            objective, purpose, principles, team
   components/
-    layout/     Header, Footer, PageHero
-    home/       Hero, Ticker, LatestArticles, SeriesStrip, ResearchTeaser, Founders, PartnershipTeaser
+    layout/     Header, Footer, PageHero, ComingSoon
+    home/       Hero, MarketPanel, Ticker, InstagramShowcase, SeriesStrip, Founders,
+                PartnershipTeaser, useLiveCrypto
     article/    ArticleCard (card / lead / row), CategoryTabs, Prose
     research/   ReportCard
     partnership/InquiryForm
     ui/         primitives.tsx, Reveal.tsx
-  data/         types.ts, articles.ts, research.ts, site.ts, index.ts
+  data/         types.ts, articles.ts, research.ts, site.ts, market.json, index.ts
+scripts/        fetch-market.mjs, flatten-rsc-payloads.mjs
 public/
   brand/        gn-tile.png, gn-mark.png   (extracted from the supplied logo)
   media/        14 post images from the deck, as webp @1200px + @640px
@@ -79,12 +81,48 @@ Instagram figures on `/partnership` and `/about` (12,315 views · 2,408 reached 
 interactions · 739 profile visits) come from the deck's 30-day snapshot and are labelled
 as such.
 
+### Publishing switches
+
+Artikel and Free Research are written and ready, but **switched off** — Genesis is
+Instagram-first for now. Both routes serve a Coming Soon page instead of 404ing, the nav
+shows a "Soon" badge, and no detail pages are built.
+
+```ts
+// src/data/site.ts
+export const features = { artikel: false, research: false } as const;
+```
+
+Flip a flag and everything comes back: nav dropdowns, footer columns, home sections, and
+the prerendered detail pages. Nothing in `articles.ts` / `research.ts` was deleted.
+
+### Market data
+
+Quotes are real. `scripts/fetch-market.mjs` runs in CI before the build and writes
+`src/data/market.json`:
+
+- **IDX** (IHSG, BBCA, BBRI, TLKM) from Yahoo Finance — server-side only, because Yahoo
+  sends no CORS headers. Delayed ~15 minutes, refreshed hourly during market hours by the
+  workflow's `schedule` trigger.
+- **Crypto** (BTC, ETH, SOL) from CoinGecko — also refreshed in the browser on page load
+  via `useLiveCrypto`, since CoinGecko does send `access-control-allow-origin: *`.
+
+The script never fails the build: if a source is unreachable the previous value is kept and
+flagged `stale`. The UI carries a "per HH:MM WIB" timestamp rather than pretending the
+numbers are instant.
+
+> GitHub disables scheduled workflows after 60 days without repo activity — if quotes go
+> stale, that's the first thing to check.
+
 ### Still to replace
 
 - **Founder names and photos** — `src/data/site.ts` has three role-first placeholders
   (`Nama Founder`, etc.) marked with a `TODO`. Nothing about real people was invented.
-- **Market ticker** — `instruments` in `site.ts` is static and labelled *"data ilustratif"*
-  in the UI. Swap for a live feed when there is one.
+- **Instagram grid** — `instagramPosts` in `site.ts` is curated by hand. Pulling posts
+  automatically needs the Instagram Graph API plus a token that expires every ~60 days,
+  which isn't worth the upkeep at this cadence. Cards link to the profile, not to
+  individual posts; add permalinks when available.
+- **Instagram stats** — the four figures in `audienceStats` are typed in by hand from
+  Instagram Insights, same reasoning.
 - **Inquiry form** — posts nowhere; it shows a "not connected yet" state and points at the
   partnership email.
 

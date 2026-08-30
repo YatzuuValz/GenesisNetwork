@@ -1,19 +1,24 @@
 import Image from "@/components/ui/Img";
 import Link from "next/link";
-import { categories, site } from "@/data";
+import { categories, features, site } from "@/data";
 import { Arrow, Bloom } from "@/components/ui/primitives";
 
+/** Category links would land on empty pages while a section is switched off. */
 const columns = [
   {
     title: "Artikel",
-    links: categories.map((c) => ({ label: c.navLabel, href: `/artikel/kategori/${c.slug}` })),
+    links: features.artikel
+      ? categories.map((c) => ({ label: c.navLabel, href: `/artikel/kategori/${c.slug}` }))
+      : [{ label: "Segera hadir", href: "/artikel" }],
   },
   {
     title: "Free Research",
-    links: categories.map((c) => ({
-      label: `${c.navLabel} Research`,
-      href: `/research/kategori/${c.slug}`,
-    })),
+    links: features.research
+      ? categories.map((c) => ({
+          label: `${c.navLabel} Research`,
+          href: `/research/kategori/${c.slug}`,
+        }))
+      : [{ label: "Segera hadir", href: "/research" }],
   },
   {
     title: "Perusahaan",

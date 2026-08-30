@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { seriesList } from "@/data";
+import { features, seriesList } from "@/data";
 import { Arrow, Eyebrow } from "@/components/ui/primitives";
 import Reveal from "@/components/ui/Reveal";
 
@@ -43,7 +43,13 @@ export default function SeriesStrip() {
                 </p>
 
                 <Link
-                  href={s.category === "mixed" ? "/artikel" : `/artikel/kategori/${s.category}`}
+                  href={
+                    !features.artikel
+                      ? "#karya"
+                      : s.category === "mixed"
+                        ? "/artikel"
+                        : `/artikel/kategori/${s.category}`
+                  }
                   className="text-bone-500 group-hover:text-bone-50 mt-7 inline-flex items-center gap-2 text-xs transition-colors duration-300"
                 >
                   Lihat konten

@@ -1,7 +1,7 @@
 import { articles } from "./articles";
 import { reports } from "./research";
 import { categories, seriesList } from "./site";
-import type { Article, CategorySlug, ResearchReport } from "./types";
+import type { Article, CategorySlug, Instrument, ResearchReport } from "./types";
 
 export * from "./types";
 export * from "./site";
@@ -79,4 +79,45 @@ export function formatDateID(iso: string): string {
 export function formatDateShort(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   return `${String(d).padStart(2, "0")}.${String(m).padStart(2, "0")}.${String(y).slice(2)}`;
+}
+
+/* ------------------------------------------------------------------
+   Market formatting. Deliberately hand-rolled rather than
+   toLocaleString(): the server and the browser must produce byte-identical
+   output or React reports a hydration mismatch.
+   ------------------------------------------------------------------ */
+
+/** Indonesian convention: "." groups thousands, "," marks decimals. */
+function groupID(value: number, decimals: number): string {
+  const fixed = Math.abs(value).toFixed(decimals);
+  const [whole, frac] = fixed.split(".");
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const sign = value < 0 ? "-" : "";
+  return frac ? `${sign}${grouped},${frac}` : `${sign}${grouped}`;
+}
+
+export function formatPrice(i: Instrument): string {
+  if (i.price === null) return "—";
+  if (i.market === "crypto") {
+    return `$${groupID(i.price, i.price >= 1000 ? 0 : 2)}`;
+  }
+  // The composite index carries decimals; individual shares are whole rupiah.
+  return i.symbol === "IHSG" ? groupID(i.price, 2) : `Rp${groupID(i.price, 0)}`;
+}
+
+export function formatChange(change: number | null): string {
+  if (change === null) return "—";
+  return `${change > 0 ? "+" : ""}${groupID(change, 2)}%`;
+}
+
+const WIB_OFFSET_MS = 7 * 60 * 60 * 1000;
+
+/** "30 Agustus 2026, 15:12 WIB" — computed, not locale-dependent. */
+export function formatFetchedAt(iso: string): string {
+  const d = new Date(new Date(iso).getTime() + WIB_OFFSET_MS);
+  const day = d.getUTCDate();
+  const month = monthsID[d.getUTCMonth()];
+  const hh = String(d.getUTCHours()).padStart(2, "0");
+  const mm = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${day} ${month} ${d.getUTCFullYear()}, ${hh}:${mm} WIB`;
 }

@@ -18,8 +18,8 @@ export default function NotFound() {
         </p>
         <div className="mt-10 flex flex-wrap gap-3.5">
           <ButtonLink href="/">Kembali ke home</ButtonLink>
-          <ButtonLink href="/artikel" variant="outline">
-            Lihat artikel
+          <ButtonLink href="/#karya" variant="outline">
+            Lihat karya kami
           </ButtonLink>
         </div>
       </div>

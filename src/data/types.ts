@@ -86,9 +86,31 @@ export interface Founder {
 export interface Instrument {
   symbol: string;
   name: string;
-  price: string;
-  change: number;
-  market: "crypto" | "idx" | "macro";
+  market: "crypto" | "idx";
+  /** IDX rows are IDR; crypto rows are USD. Null only if a source was down. */
+  price: number | null;
+  /** Percent move: 24h for crypto, versus previous close for IDX. */
+  change: number | null;
+  /** Crypto only — carries the rupiah figure alongside the dollar one. */
+  priceIdr?: number | null;
+  /** CoinGecko id, present on crypto rows so the ticker can refresh them live. */
+  coinId?: string;
+  /** True when the last fetch failed and this is a retained older value. */
+  stale?: boolean;
+}
+
+export interface MarketSnapshot {
+  fetchedAt: string;
+  instruments: Instrument[];
+}
+
+/** One Instagram post's artwork. Curated by hand — see README. */
+export interface InstagramPost {
+  src: string;
+  thumb: string;
+  caption: string;
+  series: SeriesSlug;
+  aspect: "4/5" | "9/16";
 }
 
 export interface RevenueStream {

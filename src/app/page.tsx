@@ -1,8 +1,7 @@
 import Hero from "@/components/home/Hero";
 import Ticker from "@/components/home/Ticker";
-import LatestArticles from "@/components/home/LatestArticles";
+import InstagramShowcase from "@/components/home/InstagramShowcase";
 import SeriesStrip from "@/components/home/SeriesStrip";
-import ResearchTeaser from "@/components/home/ResearchTeaser";
 import Founders from "@/components/home/Founders";
 import PartnershipTeaser from "@/components/home/PartnershipTeaser";
 
@@ -11,9 +10,8 @@ export default function HomePage() {
     <>
       <Hero />
       <Ticker />
-      <LatestArticles />
+      <InstagramShowcase />
       <SeriesStrip />
-      <ResearchTeaser />
       <Founders />
       <PartnershipTeaser />
     </>

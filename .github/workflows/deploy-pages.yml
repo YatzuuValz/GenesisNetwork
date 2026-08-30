@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Refresh quotes hourly while IDX is open (09:00-16:00 WIB = 02:00-09:00 UTC).
+  # Note: GitHub disables scheduled workflows after 60 days without repo activity.
+  schedule:
+    - cron: "0 2-9 * * 1-5"
 
 permissions:
   contents: read
@@ -27,6 +31,11 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # Yahoo (IDX) sends no CORS headers, so quotes must be fetched server-side
+      # and baked in. Never fails the build — see the script.
+      - name: Fetch market quotes
+        run: node scripts/fetch-market.mjs
 
       - name: Build static export
         run: npm run build

@@ -1,0 +1,67 @@
+{
+  "fetchedAt": "2026-08-30T08:12:54.090Z",
+  "instruments": [
+    {
+      "symbol": "IHSG",
+      "name": "Jakarta Composite",
+      "market": "idx",
+      "price": 6518.121,
+      "change": -0.05564457392570868,
+      "stale": false
+    },
+    {
+      "symbol": "BBCA",
+      "name": "Bank Central Asia",
+      "market": "idx",
+      "price": 6475,
+      "change": 1.171875,
+      "stale": false
+    },
+    {
+      "symbol": "BBRI",
+      "name": "Bank Rakyat Indonesia",
+      "market": "idx",
+      "price": 3190,
+      "change": 1.2698412698412698,
+      "stale": false
+    },
+    {
+      "symbol": "TLKM",
+      "name": "Telkom Indonesia",
+      "market": "idx",
+      "price": 2570,
+      "change": -1.532567049808429,
+      "stale": false
+    },
+    {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "market": "crypto",
+      "coinId": "bitcoin",
+      "price": 78157,
+      "priceIdr": 1387865112,
+      "change": 0.8284095918673136,
+      "stale": false
+    },
+    {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "market": "crypto",
+      "coinId": "ethereum",
+      "price": 2457.13,
+      "priceIdr": 43632174,
+      "change": 0.9896217602060757,
+      "stale": false
+    },
+    {
+      "symbol": "SOL",
+      "name": "Solana",
+      "market": "crypto",
+      "coinId": "solana",
+      "price": 104.91,
+      "priceIdr": 1862974,
+      "change": 1.4634466289871175,
+      "stale": false
+    }
+  ]
+}

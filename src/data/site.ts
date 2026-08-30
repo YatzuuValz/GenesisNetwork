@@ -1,4 +1,14 @@
-import type { Category, Founder, Instrument, RevenueStream, Series, CaseStudyAsset } from "./types";
+import market from "./market.json";
+import type {
+  Category,
+  Founder,
+  InstagramPost,
+  Instrument,
+  MarketSnapshot,
+  RevenueStream,
+  Series,
+  CaseStudyAsset,
+} from "./types";
 
 export const site = {
   name: "Genesis Network",
@@ -15,6 +25,16 @@ export const site = {
   email: "hello@genesisnetwork.id",
   partnershipEmail: "partnership@genesisnetwork.id",
   city: "Jakarta, Indonesia",
+} as const;
+
+/**
+ * Artikel and Free Research are written and ready in src/data, but not published
+ * yet — Genesis is Instagram-first for now. Flip a flag to switch a section back
+ * on: nav, footer, home page and the routes themselves all read from here.
+ */
+export const features = {
+  artikel: false,
+  research: false,
 } as const;
 
 export const categories: Category[] = [
@@ -105,19 +125,13 @@ export const founders: Founder[] = [
   },
 ];
 
-/** Static mock quotes for the ticker — no market feed in this mockup. */
-export const instruments: Instrument[] = [
-  { symbol: "BTC", name: "Bitcoin", price: "$96.240", change: 1.84, market: "crypto" },
-  { symbol: "ETH", name: "Ethereum", price: "$3.412", change: -0.62, market: "crypto" },
-  { symbol: "SOL", name: "Solana", price: "$204,80", change: 3.11, market: "crypto" },
-  { symbol: "IHSG", name: "Jakarta Composite", price: "7.284,15", change: 0.47, market: "idx" },
-  { symbol: "BBCA", name: "Bank Central Asia", price: "Rp9.775", change: -0.25, market: "idx" },
-  { symbol: "BBRI", name: "Bank Rakyat Indonesia", price: "Rp4.180", change: 1.09, market: "idx" },
-  { symbol: "USD/IDR", name: "Rupiah", price: "16.185", change: -0.18, market: "macro" },
-  { symbol: "BI RATE", name: "Suku Bunga Acuan", price: "5,50%", change: 0, market: "macro" },
-  { symbol: "GOLD", name: "Emas", price: "$2.688", change: 0.74, market: "macro" },
-  { symbol: "TLKM", name: "Telkom Indonesia", price: "Rp2.910", change: 0.34, market: "idx" },
-];
+/**
+ * Live quotes, fetched at build time by scripts/fetch-market.mjs. The crypto
+ * rows are refreshed again client-side (CoinGecko allows cross-origin reads);
+ * IDX rows stay as of the last build because Yahoo does not.
+ */
+export const marketSnapshot = market as MarketSnapshot;
+export const instruments: Instrument[] = marketSnapshot.instruments;
 
 export const revenueStreams: RevenueStream[] = [
   {
@@ -163,6 +177,31 @@ export const caseStudyAssets: CaseStudyAsset[] = [
   { src: "/media/tokocrypto-launch.webp", label: "Launch", aspect: "4/5" },
   { src: "/media/tokocrypto-pilihan-24jam.webp", label: "Engage", aspect: "4/5" },
   { src: "/media/tokenized-hits-different.webp", label: "Closing", aspect: "4/5" },
+];
+
+/**
+ * The Instagram grid. Curated by hand: pulling live posts needs the Instagram
+ * Graph API plus a token that expires every ~60 days, which isn't worth the
+ * upkeep for a feed that updates weekly. New post = add a row here.
+ *
+ * Each card links to the profile, not to the individual post — swap in the real
+ * permalinks when they're available.
+ */
+export const instagramPosts: InstagramPost[] = [
+  { src: "/media/cz-ai-agents.webp", thumb: "/media/cz-ai-agents-sm.webp", caption: "CZ prediksi AI agents segera tangani pembayaran crypto", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/msci-status-ri.webp", thumb: "/media/msci-status-ri-sm.webp", caption: "MSCI umumkan status RI Juni ini", series: "equity-voyage", aspect: "4/5" },
+  { src: "/media/unscripted-orang-kaya.webp", thumb: "/media/unscripted-orang-kaya-sm.webp", caption: "Menurut kalian orang ini beneran kaya?", series: "genesis-unscripted", aspect: "9/16" },
+  { src: "/media/tokoh-berpengaruh-kripto.webp", thumb: "/media/tokoh-berpengaruh-kripto-sm.webp", caption: "5 orang berpengaruh di industri kripto", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/elon-musk-200-miliar.webp", thumb: "/media/elon-musk-200-miliar-sm.webp", caption: "Elon Musk kehilangan $200 miliar dalam 2 hari", series: "equity-voyage", aspect: "4/5" },
+  { src: "/media/saham-global-onchain.webp", thumb: "/media/saham-global-onchain-sm.webp", caption: "Saham global kini bisa on-chain?", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/unscripted-ferry-irwandi.webp", thumb: "/media/unscripted-ferry-irwandi-sm.webp", caption: "Apa arti cukup dalam investasi menurut Ferry Irwandi?", series: "genesis-unscripted", aspect: "9/16" },
+  { src: "/media/apa-itu-tokenized-stocks.webp", thumb: "/media/apa-itu-tokenized-stocks-sm.webp", caption: "Apa itu tokenized stocks?", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/waktu-kunci-investasi.webp", thumb: "/media/waktu-kunci-investasi-sm.webp", caption: "Waktu menjadi kunci dalam investasi", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/pasar-24-jam.webp", thumb: "/media/pasar-24-jam-sm.webp", caption: "Bayangin kamu mau belanja tapi tokonya malah tutup", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/tokocrypto-teaser.webp", thumb: "/media/tokocrypto-teaser-sm.webp", caption: "Segera hadir di Tokocrypto", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/tokocrypto-launch.webp", thumb: "/media/tokocrypto-launch-sm.webp", caption: "Trade tokenized stocks di Tokocrypto sekarang", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/tokocrypto-pilihan-24jam.webp", thumb: "/media/tokocrypto-pilihan-24jam-sm.webp", caption: "Tokenized stock tersedia 24 jam di Tokocrypto", series: "chain-horizon", aspect: "4/5" },
+  { src: "/media/tokenized-hits-different.webp", thumb: "/media/tokenized-hits-different-sm.webp", caption: "Tokenized stocks hits different", series: "chain-horizon", aspect: "4/5" },
 ];
 
 /** Numbers from the deck's 30-day Instagram snapshot (first two weeks live). */

@@ -162,7 +162,7 @@ export default function AboutPage() {
                   konsisten supaya pembaca tahu kapan harus kembali.
                 </p>
                 <div className="mt-9">
-                  <ButtonLink href="/artikel">Lihat karyanya</ButtonLink>
+                  <ButtonLink href="/#karya">Lihat karyanya</ButtonLink>
                 </div>
               </div>
             </Reveal>

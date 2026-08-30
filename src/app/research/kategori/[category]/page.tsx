@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   categories,
+  features,
   getCategory,
   getReports,
   reports as allReports,
@@ -12,8 +13,13 @@ import PageHero from "@/components/layout/PageHero";
 import { ReportCard } from "@/components/research/ReportCard";
 import Reveal from "@/components/ui/Reveal";
 
+// `output: export` rejects an empty generateStaticParams, so while the section
+// is switched off we emit a single throwaway route that immediately 404s. No
+// real slug is built, and nothing links here.
 export function generateStaticParams() {
-  return categories.map((c) => ({ category: c.slug }));
+  return features.research
+    ? categories.map((c) => ({ category: c.slug }))
+    : [{ category: "segera-hadir" }];
 }
 
 export async function generateMetadata({
@@ -29,6 +35,8 @@ export default async function ResearchCategoryPage({
   params,
 }: PageProps<"/research/kategori/[category]">) {
   const { category } = await params;
+  if (!features.research) notFound();
+
   const cat = getCategory(category);
   if (!cat) notFound();
 

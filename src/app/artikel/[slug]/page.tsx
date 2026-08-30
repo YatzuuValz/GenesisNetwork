@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   articles,
+  features,
   formatDateID,
   getArticle,
   getRelatedArticles,
@@ -15,8 +16,11 @@ import Prose from "@/components/article/Prose";
 import { Arrow, Bloom, Divider, Pill } from "@/components/ui/primitives";
 import Reveal from "@/components/ui/Reveal";
 
+// `output: export` rejects an empty generateStaticParams, so while the section
+// is switched off we emit a single throwaway route that immediately 404s. No
+// real slug is built, and nothing links here.
 export function generateStaticParams() {
-  return articles.map((a) => ({ slug: a.slug }));
+  return features.artikel ? articles.map((a) => ({ slug: a.slug })) : [{ slug: "segera-hadir" }];
 }
 
 export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">): Promise<Metadata> {
@@ -33,6 +37,8 @@ export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">)
 
 export default async function ArticlePage({ params }: PageProps<"/artikel/[slug]">) {
   const { slug } = await params;
+  if (!features.artikel) notFound();
+
   const article = getArticle(slug);
   if (!article) notFound();
 

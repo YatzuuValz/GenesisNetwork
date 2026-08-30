@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { categories, getReports, reports as allReports } from "@/data";
+import { categories, features, getReports, reports as allReports } from "@/data";
 import CategoryTabs from "@/components/article/CategoryTabs";
+import ComingSoon from "@/components/layout/ComingSoon";
 import PageHero from "@/components/layout/PageHero";
 import { ReportCard } from "@/components/research/ReportCard";
 import Reveal from "@/components/ui/Reveal";
@@ -27,6 +28,22 @@ const principles = [
 ];
 
 export default function ResearchIndexPage() {
+  if (!features.research) {
+    return (
+      <ComingSoon
+        eyebrow="Free Research"
+        title="Laporan risetnya"
+        accent="belum kami rilis."
+        lead="Riset butuh waktu, dan kami memilih menunggu sampai datanya benar-benar bisa dipertanggungjawabkan daripada menerbitkan sesuatu yang setengah matang. Semuanya akan gratis dibaca, dengan metodologi yang dibuka penuh."
+        bullets={[
+          { label: "Genesis Crypto Rank", detail: "Peringkat aset berdasarkan likuiditas riil dan aktivitas on-chain, bukan kapitalisasi pasar." },
+          { label: "Outlook makro berkala", detail: "Suku bunga, nilai tukar, dan konsumsi rumah tangga yang menggerakkan IHSG." },
+          { label: "Metodologi terbuka", detail: "Cara menghitungnya kami tulis, termasuk batasan yang melemahkan kesimpulan kami sendiri." },
+        ]}
+      />
+    );
+  }
+
   const reports = getReports();
 
   const counts: Record<string, number> = { "": allReports.length };
