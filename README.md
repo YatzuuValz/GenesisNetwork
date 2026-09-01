@@ -61,6 +61,7 @@ scripts/        fetch-market.mjs, flatten-rsc-payloads.mjs
 public/
   brand/        gn-tile.png, gn-mark.png   (extracted from the supplied logo)
   media/        14 post images from the deck, as webp @1200px + @640px
+  team/         4 founder portraits, webp @720px + @240px
 _brief/         the original .docx and logo screenshot
 ```
 
@@ -115,16 +116,20 @@ numbers are instant.
 
 ### Still to replace
 
-- **Founder names and photos** — `src/data/site.ts` has three role-first placeholders
-  (`Nama Founder`, etc.) marked with a `TODO`. Nothing about real people was invented.
-- **Instagram grid** — `instagramPosts` in `site.ts` is curated by hand. Pulling posts
-  automatically needs the Instagram Graph API plus a token that expires every ~60 days,
-  which isn't worth the upkeep at this cadence. Cards link to the profile, not to
-  individual posts; add permalinks when available.
+- **Founder bios** — names and photos are real (supplied by Genesis); the bios are
+  filler copy.
+- **Instagram grid** — `instagramPosts` in `site.ts` is curated by hand, split into
+  Top Reels and Top Feed. Pulling posts automatically needs the Graph API plus a token
+  that expires every ~60 days, and Instagram CDN image URLs are signed and expire on
+  their own — so images are downloaded, not hotlinked. Only the two reels deep-link so
+  far; the rest fall back to the profile until public permalinks are supplied.
 - **Instagram stats** — the four figures in `audienceStats` are typed in by hand from
   Instagram Insights, same reasoning.
 - **Inquiry form** — posts nowhere; it shows a "not connected yet" state and points at the
   partnership email.
+- **Per-series posting cadence** — deliberately absent. The deck states only "7 Content /
+  Week" in total, so `format` describes the medium only. Don't add a frequency back
+  without a real number.
 
 ---
 
@@ -152,5 +157,11 @@ Payload surfaces as a TypeScript error here rather than a blank space on the pag
   Research / Partnership / About Us`) to match the brand's existing convention.
 - Free Research is currently open — full reports, no email gate. `ResearchReport.pages`
   is already in the schema if a gated PDF download is added later.
+- All four are listed as **Co-Founder** with equal standing; there is no single "Founder".
 - Every page carries the disclaimer that content is educational and not investment advice.
 - Scroll reveals, the marquee, and the live dot all respect `prefers-reduced-motion`.
+
+---
+
+A fuller handoff — business context, decisions and their reasons, hosting notes, and
+open items — lives in [CLAUDE.md](CLAUDE.md).
