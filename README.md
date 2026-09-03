@@ -163,5 +163,14 @@ Payload surfaces as a TypeScript error here rather than a blank space on the pag
 
 ---
 
+## Deploying
+
+Currently on GitHub Pages (`.github/workflows/deploy-pages.yml`, hourly cron during IDX
+hours). Vercel needs no code changes — all Pages-specific config is gated behind
+`DEPLOY_TARGET=github-pages`, and `vercel.json` carries the build command. Import the repo
+in Vercel and deploy; see [CLAUDE.md](CLAUDE.md) §8b for the quote-freshness caveat.
+
+---
+
 A fuller handoff — business context, decisions and their reasons, hosting notes, and
 open items — lives in [CLAUDE.md](CLAUDE.md).

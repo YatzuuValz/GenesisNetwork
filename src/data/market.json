@@ -1,36 +1,36 @@
 {
-  "fetchedAt": "2026-08-30T08:12:54.090Z",
+  "fetchedAt": "2026-09-03T07:31:28.496Z",
   "instruments": [
     {
       "symbol": "IHSG",
       "name": "Jakarta Composite",
       "market": "idx",
-      "price": 6518.121,
-      "change": -0.05564457392570868,
+      "price": 6652.113,
+      "change": 0.790507186428978,
       "stale": false
     },
     {
       "symbol": "BBCA",
       "name": "Bank Central Asia",
       "market": "idx",
-      "price": 6475,
-      "change": 1.171875,
+      "price": 6700,
+      "change": 0.37453183520599254,
       "stale": false
     },
     {
       "symbol": "BBRI",
       "name": "Bank Rakyat Indonesia",
       "market": "idx",
-      "price": 3190,
-      "change": 1.2698412698412698,
+      "price": 3410,
+      "change": 0.5899705014749262,
       "stale": false
     },
     {
       "symbol": "TLKM",
       "name": "Telkom Indonesia",
       "market": "idx",
-      "price": 2570,
-      "change": -1.532567049808429,
+      "price": 2610,
+      "change": 0.7722007722007722,
       "stale": false
     },
     {
@@ -38,9 +38,9 @@
       "name": "Bitcoin",
       "market": "crypto",
       "coinId": "bitcoin",
-      "price": 78157,
-      "priceIdr": 1387865112,
-      "change": 0.8284095918673136,
+      "price": 77920,
+      "priceIdr": 1375451124,
+      "change": 0.4529609897183073,
       "stale": false
     },
     {
@@ -48,9 +48,9 @@
       "name": "Ethereum",
       "market": "crypto",
       "coinId": "ethereum",
-      "price": 2457.13,
-      "priceIdr": 43632174,
-      "change": 0.9896217602060757,
+      "price": 2406.96,
+      "priceIdr": 42487942,
+      "change": -0.5867224510229059,
       "stale": false
     },
     {
@@ -58,9 +58,9 @@
       "name": "Solana",
       "market": "crypto",
       "coinId": "solana",
-      "price": 104.91,
-      "priceIdr": 1862974,
-      "change": 1.4634466289871175,
+      "price": 100.85,
+      "priceIdr": 1780149,
+      "change": 0.8111696092727068,
       "stale": false
     }
   ]

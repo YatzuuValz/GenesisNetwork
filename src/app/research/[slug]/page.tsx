@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "@/components/ui/Img";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { features, formatDateID, getReport, getReports, reports, site } from "@/data";
+import { disabledRouteParams, features, formatDateID, getReport, getReports, reports, site } from "@/data";
 import Prose from "@/components/article/Prose";
 import { ReportCard } from "@/components/research/ReportCard";
 import { Arrow, Bloom, Divider, Pill } from "@/components/ui/primitives";
@@ -12,7 +12,9 @@ import Reveal from "@/components/ui/Reveal";
 // is switched off we emit a single throwaway route that immediately 404s. No
 // real slug is built, and nothing links here.
 export function generateStaticParams() {
-  return features.research ? reports.map((r) => ({ slug: r.slug })) : [{ slug: "segera-hadir" }];
+  return features.research
+    ? reports.map((r) => ({ slug: r.slug }))
+    : disabledRouteParams({ slug: "segera-hadir" });
 }
 
 export async function generateMetadata({ params }: PageProps<"/research/[slug]">): Promise<Metadata> {

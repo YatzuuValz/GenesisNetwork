@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   articles,
+  disabledRouteParams,
   features,
   formatDateID,
   getArticle,
@@ -20,7 +21,9 @@ import Reveal from "@/components/ui/Reveal";
 // is switched off we emit a single throwaway route that immediately 404s. No
 // real slug is built, and nothing links here.
 export function generateStaticParams() {
-  return features.artikel ? articles.map((a) => ({ slug: a.slug })) : [{ slug: "segera-hadir" }];
+  return features.artikel
+    ? articles.map((a) => ({ slug: a.slug }))
+    : disabledRouteParams({ slug: "segera-hadir" });
 }
 
 export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">): Promise<Metadata> {

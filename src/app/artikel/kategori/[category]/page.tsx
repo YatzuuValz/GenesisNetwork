@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   categories,
   countByCategory,
+  disabledRouteParams,
   features,
   getArticles,
   getCategory,
@@ -20,7 +21,7 @@ import Reveal from "@/components/ui/Reveal";
 export function generateStaticParams() {
   return features.artikel
     ? categories.map((c) => ({ category: c.slug }))
-    : [{ category: "segera-hadir" }];
+    : disabledRouteParams({ category: "segera-hadir" });
 }
 
 export async function generateMetadata({ params }: PageProps<"/artikel/kategori/[category]">): Promise<Metadata> {

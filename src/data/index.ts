@@ -121,3 +121,13 @@ export function formatFetchedAt(iso: string): string {
   const mm = String(d.getUTCMinutes()).padStart(2, "0");
   return `${day} ${month} ${d.getUTCFullYear()}, ${hh}:${mm} WIB`;
 }
+
+/**
+ * `output: export` refuses a dynamic route that generates nothing, so a switched-off
+ * section still has to emit one throwaway param (the page then 404s). A server
+ * deploy — Vercel and friends — has no such rule, so it gets a genuinely empty
+ * list and ships no placeholder URL at all.
+ */
+export function disabledRouteParams<T>(placeholder: T): T[] {
+  return process.env.DEPLOY_TARGET === "github-pages" ? [placeholder] : [];
+}

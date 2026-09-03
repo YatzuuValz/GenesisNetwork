@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   categories,
+  disabledRouteParams,
   features,
   getCategory,
   getReports,
@@ -19,7 +20,7 @@ import Reveal from "@/components/ui/Reveal";
 export function generateStaticParams() {
   return features.research
     ? categories.map((c) => ({ category: c.slug }))
-    : [{ category: "segera-hadir" }];
+    : disabledRouteParams({ category: "segera-hadir" });
 }
 
 export async function generateMetadata({
