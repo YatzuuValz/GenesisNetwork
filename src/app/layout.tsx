@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import ChromeGate from "@/components/layout/ChromeGate";
 import { withBasePath } from "@/components/ui/Img";
 import { site } from "@/data";
 import "./globals.css";
@@ -63,9 +64,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${display.variable} ${sans.variable} ${serif.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="bg-ink-950 flex min-h-full flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ChromeGate header={<Header />} footer={<Footer />}>
+          {children}
+        </ChromeGate>
       </body>
     </html>
   );
