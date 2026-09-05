@@ -257,56 +257,6 @@ then serves from root instead of `/GenesisNetwork/`.
 
 ---
 
-## 8b. Deploying to Vercel
-
-The repo is ready for Vercel with no code changes. Everything GitHub Pages needs is
-gated behind `DEPLOY_TARGET=github-pages`, which Vercel never sets, so a Vercel build
-automatically gets: no `output: export`, no `basePath`, no `trailingSlash`, real
-`next/image` optimisation, and `NEXT_PUBLIC_BASE_PATH=""` (making the `Img` wrapper a
-no-op). Verified — a build without that variable emits no `segera-hadir` sentinel routes
-and no base-path prefixes.
-
-`vercel.json` sets the build command to fetch quotes before building, so no
-configuration is needed in the Vercel dashboard.
-
-**Steps** (needs a Vercel login, so it can't be done from this repo):
-
-1. vercel.com/signup → *Continue with GitHub*
-2. **Add New → Project** → import `GenesisNetwork` → **Deploy**. Change nothing;
-   `vercel.json` and framework auto-detection cover it.
-3. Custom domain: Settings → Domains → add it, then point DNS as instructed. Because
-   there's no `basePath` on Vercel, the site serves from the root immediately.
-
-**Both hosts can run at once** from the same repo — Pages keeps deploying via Actions,
-Vercel via its own integration. Useful for comparing before committing to one.
-
-### The one real difference: quote freshness
-
-On Pages, the hourly Actions cron rebuilds the site, which re-runs `fetch-market.mjs`.
-Vercel does not watch that cron, so **IDX quotes would only refresh when someone
-deploys.** Crypto is unaffected — it refreshes in the browser either way.
-
-Three ways to fix it, cheapest first:
-
-1. **Deploy hook** — create one in Vercel (Settings → Git → Deploy Hooks), store the URL
-   as a repo secret, and add a `curl` step to the existing cron job. No refactor.
-2. **Vercel Cron** — a scheduled function that triggers a rebuild. Hobby is limited to
-   once a day; Pro allows more.
-3. **ISR (the right answer on Vercel)** — Vercel has a server, so IDX can be fetched in a
-   server component with `revalidate: 3600` instead of baked at build. This removes the
-   cron and the `market.json` commit entirely. Worth doing *only* if Vercel becomes the
-   single host — it would break the Pages build, which has no server.
-
-### Cost caveat
-
-Vercel's free **Hobby** tier is for personal, non-commercial projects. Genesis sells
-sponsorships, so a strict reading puts it on **Pro ($20/mo)**. GitHub Pages is more
-permissive for this case — it only forbids e-commerce and SaaS, not business content
-sites. Cloudflare Pages is the free middle ground: private repos and commercial use both
-allowed.
-
----
-
 ## 9. What can't be automated
 
 Verified by testing, not assumed:
