@@ -1,25 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "@/components/ui/Img";
 import { categories, seriesList } from "@/data";
 import type { Block } from "@/data";
+import BlockEditor from "./BlockEditor";
 import { Arrow } from "@/components/ui/primitives";
 import type { AdminArticle } from "./ArticleList";
 import {
+  AutoTextArea,
   Derived,
   Field,
   Panel,
   Select,
   StatusBadge,
-  TextArea,
   TextInput,
   Toggle,
   type Status,
 } from "./fields";
 
-/* The three values a CMS should compute rather than ask for. Demonstrated live
-   so the shape of the real thing is obvious before it's built. */
+/* Slug is derived, not typed — shown live so the behaviour is concrete. */
 
 function slugify(title: string) {
   return title
@@ -29,26 +29,6 @@ function slugify(title: string) {
     .replace(/\s+/g, "-")
     .slice(0, 70);
 }
-
-function wordsIn(body: Block[]) {
-  return body.reduce((n, b) => {
-    const text =
-      b.type === "list"
-        ? b.items.join(" ")
-        : b.type === "stat"
-          ? `${b.value} ${b.label} ${b.note ?? ""}`
-          : b.text;
-    return n + text.trim().split(/\s+/).filter(Boolean).length;
-  }, 0);
-}
-
-const blockLabel: Record<Block["type"], string> = {
-  p: "Paragraf",
-  h2: "Subjudul",
-  quote: "Kutipan",
-  list: "Daftar",
-  stat: "Angka",
-};
 
 export default function ArticleEditor({
   article,
@@ -70,11 +50,8 @@ export default function ArticleEditor({
   const [seoDesc, setSeoDesc] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
 
-  const slug = useMemo(() => slugify(title), [title]);
-  const readingMinutes = useMemo(
-    () => Math.max(1, Math.round(wordsIn(article.body) / 200)),
-    [article.body],
-  );
+  const [body, setBody] = useState<Block[]>(article.body);
+  const slug = slugify(title);
 
   const notice = (msg: string) => {
     setSaved(msg);
@@ -138,9 +115,11 @@ export default function ArticleEditor({
         </div>
       )}
 
-      <div className="grid gap-7 lg:grid-cols-[1.65fr_1fr] lg:items-start">
+      {/* min-w-0 on both columns: without it a grid track refuses to shrink below
+          its content, and one long unbreakable string pushes the sidebar off-screen. */}
+      <div className="grid min-w-0 gap-7 lg:grid-cols-[1.65fr_minmax(0,1fr)] lg:items-start">
         {/* ---- main column ---- */}
-        <div className="space-y-7">
+        <div className="min-w-0 space-y-7">
           <Panel title="Konten">
             <Field label="Judul">
               <TextInput value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -158,7 +137,7 @@ export default function ArticleEditor({
             </Field>
 
             <Field label="Deck" hint="Satu–dua kalimat untuk kartu dan hasil pencarian.">
-              <TextArea rows={3} value={deck} onChange={(e) => setDeck(e.target.value)} />
+              <AutoTextArea value={deck} onChange={setDeck} minRows={2} />
             </Field>
           </Panel>
 
@@ -185,47 +164,18 @@ export default function ArticleEditor({
             </div>
           </Panel>
 
-          <Panel title={`Isi artikel · ${article.body.length} blok`}>
-            <ul className="space-y-2.5">
-              {article.body.map((b, i) => (
-                <li
-                  key={i}
-                  className="group flex items-start gap-4 rounded-lg border border-white/[0.07] bg-white/[0.02] px-4 py-3"
-                >
-                  <span className="u-eyebrow text-volt-400/70 w-16 shrink-0 pt-0.5 text-[0.5rem]">
-                    {blockLabel[b.type]}
-                  </span>
-                  <span className="text-bone-300 min-w-0 flex-1 truncate text-[0.8125rem]">
-                    {b.type === "list"
-                      ? b.items[0]
-                      : b.type === "stat"
-                        ? `${b.value} — ${b.label}`
-                        : b.text}
-                  </span>
-                  <span className="text-bone-700 shrink-0 text-[0.6875rem] opacity-0 transition-opacity group-hover:opacity-100">
-                    ⋮⋮
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              type="button"
-              onClick={() => notice("Editor teks kaya menyusul bersama backend.")}
-              className="text-bone-400 hover:text-bone-100 w-full rounded-lg border border-dashed border-white/15 px-4 py-3 text-xs transition-colors hover:border-white/30"
-            >
-              + Tambah blok
-            </button>
-
+          <Panel title={`Isi artikel · ${body.length} blok`}>
+            <BlockEditor blocks={body} onChange={setBody} />
             <p className="text-bone-600 text-[0.6875rem] leading-relaxed">
-              Di versi jadinya ini berupa editor teks mengalir, dengan blok khusus
-              (kutipan, angka) yang bisa disisipkan di tengah tulisan.
+              Di versi jadinya, paragraf dan subjudul digabung jadi satu editor teks
+              mengalir. Blok berstruktur seperti kutipan dan angka tetap terpisah karena
+              punya isian sendiri.
             </p>
           </Panel>
         </div>
 
         {/* ---- sidebar ---- */}
-        <div className="space-y-7">
+        <div className="min-w-0 space-y-7">
           <Panel title="Penerbitan">
             <Field label="Status">
               <Select value={status} onChange={(e) => setStatus(e.target.value as Status)}>
@@ -290,9 +240,6 @@ export default function ArticleEditor({
               <Derived value={article.author.name} />
             </Field>
 
-            <Field label="Waktu baca" derived hint="Dihitung dari jumlah kata isi artikel.">
-              <Derived value={`${readingMinutes} menit`} />
-            </Field>
           </Panel>
 
           <Panel title="SEO">
@@ -305,12 +252,7 @@ export default function ArticleEditor({
             </Field>
 
             <Field label="Meta description" hint="Kosong → pakai deck.">
-              <TextArea
-                rows={3}
-                value={seoDesc}
-                onChange={(e) => setSeoDesc(e.target.value)}
-                placeholder="Ikuti deck"
-              />
+              <AutoTextArea value={seoDesc} onChange={setSeoDesc} placeholder="Ikuti deck" />
             </Field>
 
             <div className="rounded-lg border border-white/[0.07] bg-white/[0.02] p-3.5">

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useCallback, useLayoutEffect, useRef, type ReactNode } from "react";
 
 /* Admin UI primitives. Denser and plainer than the marketing site — same tokens,
    but no display type, no blooms, no reveal animations. A CMS is a tool. */
@@ -40,6 +40,57 @@ export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
 
 export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} className={`${base} resize-none ${props.className ?? ""}`} />;
+}
+
+/**
+ * Textarea that grows to fit its content, so long paragraphs are never hidden
+ * behind a scrollbar inside a fixed-height box. CSS `field-sizing: content`
+ * would do this natively but is not supported widely enough yet.
+ */
+export function AutoTextArea({
+  value,
+  onChange,
+  minRows = 2,
+  className = "",
+  ...rest
+}: Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange" | "rows"> & {
+  value: string;
+  onChange: (value: string) => void;
+  minRows?: number;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const fit = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, []);
+
+  // Layout effect, not state: this measures and writes a style, so it must run
+  // before paint or the box visibly jumps.
+  useLayoutEffect(fit, [value, fit]);
+
+  // Height also depends on width — a narrower box wraps into more lines. Without
+  // this, resizing the window (or rotating a phone) leaves the text clipped.
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [fit]);
+
+  return (
+    <textarea
+      {...rest}
+      ref={ref}
+      rows={minRows}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`${base} resize-none overflow-hidden ${className}`}
+    />
+  );
 }
 
 export function Select({

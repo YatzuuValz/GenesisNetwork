@@ -209,7 +209,7 @@ export default function ArticleList({
                         {a.title}
                       </div>
                       <div className="text-bone-600 mt-1 truncate text-[0.6875rem]">
-                        {getSeries(a.series)?.name} · {a.readingMinutes} mnt
+                        {getSeries(a.series)?.name}
                       </div>
                     </div>
                   </div>

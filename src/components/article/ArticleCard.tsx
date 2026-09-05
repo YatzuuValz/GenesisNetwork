@@ -50,7 +50,7 @@ export function ArticleCard({ article, priority = false }: { article: Article; p
           </p>
 
           <span className="text-bone-500 group-hover:text-volt-400 mt-4 inline-flex items-center gap-2 text-xs transition-colors duration-300">
-            {article.readingMinutes} menit baca
+            Baca selengkapnya
             <Arrow className="transition-transform duration-300 group-hover:translate-x-1" />
           </span>
         </div>

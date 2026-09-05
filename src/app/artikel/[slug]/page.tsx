@@ -80,9 +80,6 @@ export default async function ArticlePage({ params }: PageProps<"/artikel/[slug]
                     <span className="u-eyebrow text-bone-600 text-[0.5625rem]">
                       {formatDateID(article.publishedAt)}
                     </span>
-                    <span className="u-eyebrow text-bone-600 text-[0.5625rem]">
-                      {article.readingMinutes} menit baca
-                    </span>
                   </div>
                 </Reveal>
 
