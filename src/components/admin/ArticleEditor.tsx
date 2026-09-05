@@ -5,6 +5,7 @@ import Image from "@/components/ui/Img";
 import { categories, seriesList } from "@/data";
 import type { Block } from "@/data";
 import BlockEditor from "./BlockEditor";
+import ArticlePreview from "./ArticlePreview";
 import { Arrow } from "@/components/ui/primitives";
 import type { AdminArticle } from "./ArticleList";
 import {
@@ -49,6 +50,7 @@ export default function ArticleEditor({
   const [seoTitle, setSeoTitle] = useState("");
   const [seoDesc, setSeoDesc] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
+  const [previewing, setPreviewing] = useState(false);
 
   const [body, setBody] = useState<Block[]>(article.body);
   const slug = slugify(title);
@@ -78,7 +80,7 @@ export default function ArticleEditor({
         <div className="flex items-center gap-2.5">
           <button
             type="button"
-            onClick={() => notice("Pratinjau akan membuka draft di situs.")}
+            onClick={() => setPreviewing(true)}
             className="text-bone-300 hover:text-bone-50 rounded-full border border-white/12 px-4 py-2 text-xs transition-colors hover:border-white/25"
           >
             Pratinjau
@@ -278,6 +280,22 @@ export default function ArticleEditor({
           </button>
         </div>
       </div>
+
+      {previewing && (
+        <ArticlePreview
+          title={title}
+          accent={accent}
+          deck={deck}
+          cover={article.cover}
+          category={category}
+          series={series}
+          publishedAt={publishedAt}
+          status={status}
+          author={article.author.name}
+          body={body}
+          onClose={() => setPreviewing(false)}
+        />
+      )}
     </div>
   );
 }

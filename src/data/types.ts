@@ -28,12 +28,17 @@ export interface Series {
   blurb: string;
 }
 
+/**
+ * Prose fields (`text`, `items`) accept minimal inline markup — `[label](url)`
+ * and `**bold**` — rendered by components/article/InlineText.
+ */
 export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
   | { type: "quote"; text: string; cite?: string }
   | { type: "list"; items: string[] }
-  | { type: "stat"; value: string; label: string; note?: string };
+  | { type: "stat"; value: string; label: string; note?: string }
+  | { type: "image"; src: string; alt: string; caption?: string };
 
 export interface Author {
   name: string;

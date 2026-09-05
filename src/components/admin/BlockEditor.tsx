@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import type { Block } from "@/data";
+import Image from "@/components/ui/Img";
+import { instagramPosts } from "@/data";
 import { AutoTextArea, TextInput } from "./fields";
 
 /**
@@ -16,7 +18,11 @@ export const BLOCK_TYPES: { type: Block["type"]; label: string; hint: string }[]
   { type: "quote", label: "Kutipan", hint: "Kalimat menonjol + sumber" },
   { type: "list", label: "Daftar", hint: "Poin bernomor titik" },
   { type: "stat", label: "Angka", hint: "Angka besar + label" },
+  { type: "image", label: "Gambar", hint: "Gambar + keterangan" },
 ];
+
+/** Stand-in for a media library — a real one lists uploaded files. */
+const MEDIA = instagramPosts.slice(0, 8);
 
 function emptyBlock(type: Block["type"]): Block {
   switch (type) {
@@ -30,6 +36,8 @@ function emptyBlock(type: Block["type"]): Block {
       return { type: "list", items: [""] };
     case "stat":
       return { type: "stat", value: "", label: "", note: "" };
+    case "image":
+      return { type: "image", src: MEDIA[0].thumb, alt: "", caption: "" };
   }
 }
 
@@ -85,11 +93,14 @@ export default function BlockEditor({
           </div>
 
           {block.type === "p" && (
-            <AutoTextArea
-              value={block.text}
-              onChange={(text) => update(i, { ...block, text })}
-              placeholder="Tulis paragraf…"
-            />
+            <>
+              <AutoTextArea
+                value={block.text}
+                onChange={(text) => update(i, { ...block, text })}
+                placeholder="Tulis paragraf…"
+              />
+              <InlineHint />
+            </>
           )}
 
           {block.type === "h2" && (
@@ -173,13 +184,52 @@ export default function BlockEditor({
               </div>
             </div>
           )}
+          {block.type === "image" && (
+            <div className="space-y-3">
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {MEDIA.map((m) => {
+                  const active = block.src === m.thumb;
+                  return (
+                    <button
+                      key={m.thumb}
+                      type="button"
+                      onClick={() => update(i, { ...block, src: m.thumb })}
+                      aria-pressed={active}
+                      title={m.caption}
+                      className={`relative aspect-[4/5] w-16 shrink-0 overflow-hidden rounded-md border transition-all ${
+                        active ? "border-volt-500 ring-volt-500/40 ring-2" : "border-white/10 hover:border-white/30"
+                      }`}
+                    >
+                      <Image src={m.thumb} alt="" fill sizes="64px" className="object-cover" />
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="text-bone-600 text-[0.625rem]">
+                Pustaka media sementara. Nanti diganti unggah file.
+              </p>
+
+              <TextInput
+                value={block.alt}
+                onChange={(e) => update(i, { ...block, alt: e.target.value })}
+                placeholder="Alt text — apa isi gambarnya"
+              />
+              <AutoTextArea
+                value={block.caption ?? ""}
+                minRows={1}
+                onChange={(caption) => update(i, { ...block, caption })}
+                placeholder="Keterangan gambar (opsional)"
+              />
+            </div>
+          )}
         </div>
       ))}
 
       {/* ---- add block ---- */}
       {adding ? (
         <div className="rounded-lg border border-dashed border-white/15 p-3">
-          <div className="grid gap-2 sm:grid-cols-5">
+          <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {BLOCK_TYPES.map((t) => (
               <button
                 key={t.type}
@@ -244,5 +294,16 @@ function IconButton({
     >
       {children}
     </button>
+  );
+}
+
+/** Links live inside a sentence, so the syntax has to be teachable in one line. */
+function InlineHint() {
+  return (
+    <p className="text-bone-600 mt-2 text-[0.625rem] leading-relaxed">
+      Tautan: <code className="text-bone-400">[teks](https://…)</code> atau ke artikel
+      sendiri <code className="text-bone-400">[teks](/artikel/slug)</code>. Tebal:{" "}
+      <code className="text-bone-400">**teks**</code>.
+    </p>
   );
 }

@@ -1,4 +1,6 @@
+import Image from "@/components/ui/Img";
 import type { Block } from "@/data";
+import InlineText from "./InlineText";
 
 /**
  * Renders the block array from the CMS. Kept deliberately small — the type
@@ -23,7 +25,7 @@ export default function Prose({ blocks }: { blocks: Block[] }) {
           case "p":
             return (
               <p key={i} className="text-bone-300 mb-6 text-[1.0625rem] leading-[1.75]">
-                {block.text}
+                <InlineText>{block.text}</InlineText>
               </p>
             );
 
@@ -49,7 +51,9 @@ export default function Prose({ blocks }: { blocks: Block[] }) {
                 {block.items.map((item) => (
                   <li key={item} className="text-bone-300 flex gap-4 text-[1.0125rem] leading-[1.7]">
                     <span className="bg-volt-500 mt-[0.65em] size-1.5 shrink-0 rounded-full" />
-                    {item}
+                    <span>
+                      <InlineText>{item}</InlineText>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -71,6 +75,30 @@ export default function Prose({ blocks }: { blocks: Block[] }) {
                   )}
                 </div>
               </div>
+            );
+
+          case "image":
+            return (
+              <figure key={i} className="my-11">
+                <div className="relative overflow-hidden rounded-xl border border-white/[0.07]">
+                  {/* Height is unknown ahead of time, so the frame sets it and the
+                      image covers — no layout shift when it loads. */}
+                  <div className="relative aspect-[16/10]">
+                    <Image
+                      src={block.src}
+                      alt={block.alt}
+                      fill
+                      sizes="(max-width: 768px) 92vw, 42rem"
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+                {block.caption && (
+                  <figcaption className="text-bone-500 mt-3.5 text-[0.8125rem] leading-relaxed">
+                    <InlineText>{block.caption}</InlineText>
+                  </figcaption>
+                )}
+              </figure>
             );
         }
       })}
