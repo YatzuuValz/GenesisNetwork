@@ -257,6 +257,54 @@ then serves from root instead of `/GenesisNetwork/`.
 
 ---
 
+## 8c. The backend
+
+The Studio is no longer a mockup: it reads and writes a real database behind a
+real login.
+
+```
+src/server/db.ts         libSQL client (SQLite locally, Turso when hosted)
+src/server/auth.ts       scrypt password hashing, DB-backed sessions
+src/server/articles.ts   article repository — the only place SQL lives
+src/app/api/**/route.mts route handlers, session-checked on every request
+scripts/migrate.mjs      schema + first-run seed from articles.ts
+scripts/create-admin.mjs creates an admin, password from the environment
+```
+
+```bash
+npm run db:migrate                                   # schema + seed
+ADMIN_EMAIL=… ADMIN_PASSWORD='…' npm run db:admin    # create a user
+npm run dev                                          # /admin
+```
+
+**Auth.** Passwords are scrypt with a per-user random salt, compared in constant
+time. A missing user still gets hashed so a wrong email and a wrong password take
+the same time. Sessions are random tokens in the database, carried by an
+httpOnly cookie — unreadable from JavaScript — and expired rows are deleted, not
+merely rejected. Login says only "email atau password salah", never which half.
+
+**Slugs.** The slug follows the title only while an article has never been
+published. After that it is frozen, because changing it breaks every link
+already shared.
+
+### Why the API routes are named `route.mts`
+
+`output: export` refuses to build a route that reads cookies, and every
+authenticated route does. Rather than lose the GitHub Pages deployment, the
+Pages build sets `pageExtensions: ["tsx","ts"]` so it never sees a `.mts` file
+at all; a server build adds `"mts"` and picks them up.
+
+The result: **the public static site keeps deploying to Pages exactly as before,
+and the Studio needs a host with a server.** Verified both ways — the export
+produces 13 pages with no `/api` and a 404 at `/admin`, and the server build
+lists all four API routes.
+
+> An earlier note here claimed API routes and the static export could coexist
+> untouched. That was wrong: the probe that "passed" never read a cookie, so it
+> was never dynamic.
+
+---
+
 ## 9. What can't be automated
 
 Verified by testing, not assumed:

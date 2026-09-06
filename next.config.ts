@@ -14,6 +14,14 @@ const basePath = isGithubPages ? "/GenesisNetwork" : "";
 
 const nextConfig: NextConfig = {
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
+
+  /**
+   * API routes read cookies, which makes them dynamic, and `output: export`
+   * refuses to build a dynamic route. Naming them `route.mts` puts them behind
+   * an extension the Pages build simply doesn't look for — so the public static
+   * site keeps deploying while the Studio and its API exist for a server host.
+   */
+  pageExtensions: isGithubPages ? ["tsx", "ts"] : ["tsx", "ts", "mts"],
   ...(isGithubPages
     ? {
         output: "export",

@@ -1,20 +1,25 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import AdminApp from "@/components/admin/AdminApp";
+import { currentUser } from "@/server/auth";
+import { listArticles } from "@/server/articles";
 
 /**
- * Development only. A convincing but fake admin panel on a public finance site
- * would be both confusing and a way to read the articles we deliberately
- * switched off, so the production build renders 404 here and ships no content.
+ * The Studio needs a server, so it is absent from the static export that ships
+ * to GitHub Pages. `ENABLE_STUDIO` opts it in on a host that has one.
  */
-const enabled = process.env.NODE_ENV !== "production";
+const enabled = process.env.NODE_ENV !== "production" || Boolean(process.env.ENABLE_STUDIO);
 
 export const metadata: Metadata = {
   title: "Studio",
   robots: { index: false, follow: false },
 };
 
-export default function AdminPage() {
+export default async function AdminPage() {
   if (!enabled) notFound();
-  return <AdminApp />;
+
+  const user = await currentUser();
+  if (!user) redirect("/admin/login");
+
+  return <AdminApp user={user} articles={await listArticles()} />;
 }

@@ -3,24 +3,21 @@
 import { useMemo, useState } from "react";
 import Image from "@/components/ui/Img";
 import { categories, formatDateShort, getSeries } from "@/data";
-import type { Article } from "@/data";
+import type { StoredArticle } from "@/server/articles";
 import { Arrow } from "@/components/ui/primitives";
 import { StatusBadge, type Status } from "./fields";
-
-export interface AdminArticle extends Article {
-  status: Status;
-  updatedAt: string;
-}
 
 type SortKey = "updated" | "published" | "title";
 
 export default function ArticleList({
   articles,
+  busy,
   onOpen,
   onCreate,
 }: {
-  articles: AdminArticle[];
-  onOpen: (slug: string) => void;
+  articles: StoredArticle[];
+  busy?: boolean;
+  onOpen: (id: string) => void;
   onCreate: () => void;
 }) {
   const [query, setQuery] = useState("");
@@ -76,9 +73,10 @@ export default function ArticleList({
         <button
           type="button"
           onClick={onCreate}
-          className="group bg-volt-500 hover:bg-volt-400 inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-300"
+          disabled={busy}
+          className="group bg-volt-500 hover:bg-volt-400 inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-300 disabled:opacity-50"
         >
-          Tulis artikel
+          {busy ? "Membuat…" : "Tulis artikel"}
           <Arrow className="transition-transform duration-300 group-hover:translate-x-1" />
         </button>
       </div>
@@ -188,10 +186,10 @@ export default function ArticleList({
         ) : (
           <ul className="divide-y divide-white/[0.05]">
             {rows.map((a) => (
-              <li key={a.slug}>
+              <li key={a.id}>
                 <button
                   type="button"
-                  onClick={() => onOpen(a.slug)}
+                  onClick={() => onOpen(a.id)}
                   className="group grid w-full grid-cols-1 gap-4 px-5 py-4 text-left transition-colors duration-200 hover:bg-white/[0.025] lg:grid-cols-[1fr_130px_120px_110px_90px] lg:items-center"
                 >
                   <div className="flex min-w-0 items-center gap-4">
@@ -226,7 +224,7 @@ export default function ArticleList({
                   </span>
 
                   <span className="u-num text-bone-500 hidden text-[0.6875rem] lg:block">
-                    {formatDateShort(a.updatedAt)}
+                    {formatDateShort(a.updatedAt.slice(0, 10))}
                   </span>
 
                   <span className="hidden justify-end lg:flex">
