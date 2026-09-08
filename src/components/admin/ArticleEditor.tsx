@@ -336,6 +336,7 @@ export default function ArticleEditor({
           series={series}
           publishedAt={publishedAt}
           status={status}
+          coverAlt={coverAlt}
           author={article.authorName}
           body={body}
           onClose={() => setPreviewing(false)}
