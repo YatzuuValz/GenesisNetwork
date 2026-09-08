@@ -2,33 +2,26 @@ import type { Metadata } from "next";
 import Image from "@/components/ui/Img";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  articles,
-  disabledRouteParams,
-  features,
-  formatDateID,
-  getArticle,
-  getRelatedArticles,
-  getSeries,
-  site,
-} from "@/data";
+import { formatDateID, getSeries, site } from "@/data";
+import { getPublishedArticle, getPublishedArticles } from "@/server/articles";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import Prose from "@/components/article/Prose";
 import { Arrow, Bloom, Divider, Pill } from "@/components/ui/primitives";
 import Reveal from "@/components/ui/Reveal";
 
-// `output: export` rejects an empty generateStaticParams, so while the section
-// is switched off we emit a single throwaway route that immediately 404s. No
-// real slug is built, and nothing links here.
-export function generateStaticParams() {
-  return features.artikel
-    ? articles.map((a) => ({ slug: a.slug }))
-    : disabledRouteParams({ slug: "segera-hadir" });
+/**
+ * Built from whatever is published at build time. `output: export` rejects an
+ * empty list, so an empty database still emits one throwaway route that 404s.
+ */
+export async function generateStaticParams() {
+  const published = await getPublishedArticles();
+  if (published.length > 0) return published.map((a) => ({ slug: a.slug }));
+  return process.env.DEPLOY_TARGET === "github-pages" ? [{ slug: "segera-hadir" }] : [];
 }
 
 export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticle(slug);
+  const article = await getPublishedArticle(slug);
   if (!article) return {};
   const title = [article.title, article.accent].filter(Boolean).join(" ");
   return {
@@ -40,13 +33,17 @@ export async function generateMetadata({ params }: PageProps<"/artikel/[slug]">)
 
 export default async function ArticlePage({ params }: PageProps<"/artikel/[slug]">) {
   const { slug } = await params;
-  if (!features.artikel) notFound();
-
-  const article = getArticle(slug);
+  const article = await getPublishedArticle(slug);
   if (!article) notFound();
 
   const series = getSeries(article.series);
-  const related = getRelatedArticles(slug, 3);
+
+  // Same category first, then anything else, so a thin category still fills up.
+  const all = (await getPublishedArticles()).filter((a) => a.slug !== slug);
+  const related = [
+    ...all.filter((a) => a.category === article.category),
+    ...all.filter((a) => a.category !== article.category),
+  ].slice(0, 3);
 
   return (
     <>

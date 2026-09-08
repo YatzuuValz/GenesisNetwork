@@ -16,9 +16,10 @@ const byTop = (a: InstagramPost, b: InstagramPost) =>
   Number(Boolean(b.top)) - Number(Boolean(a.top));
 
 const reels = instagramPosts.filter((p) => p.kind === "reel").sort(byTop);
-const posts = instagramPosts.filter((p) => p.kind === "post").sort(byTop);
+/** Three is what fits beside the reels on one row without shrinking either. */
+const posts = instagramPosts.filter((p) => p.kind === "post").sort(byTop).slice(0, 3);
 
-const CARD_SIZES = "(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 19vw";
+const CARD_SIZES = "(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 17vw";
 
 function PostCard({ post }: { post: InstagramPost }) {
   return (
@@ -146,49 +147,46 @@ export default function InstagramShowcase() {
           ))}
         </div>
 
-        {/* ---- top reels ---- */}
-        {reels.length > 0 && (
-          <div className="mt-16">
-            <Reveal>
-              <GroupHeading
-                label="Top Reels"
-                count={reels.length}
-                note="Genesis Unscripted · video"
-              />
-            </Reveal>
-            <div className="mt-7 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-              {reels.map((post, i) => (
-                <Reveal key={post.src} delay={i * 70}>
-                  <PostCard post={post} />
-                </Reveal>
-              ))}
+        {/* ---- reels and feed, side by side when there is room ---- */}
+        <div className="mt-16 grid gap-10 lg:grid-cols-[2fr_3fr] lg:gap-8">
+          {reels.length > 0 && (
+            <div>
+              <Reveal>
+                <GroupHeading
+                  label="Top Reels"
+                  count={reels.length}
+                  note="Genesis Unscripted"
+                />
+              </Reveal>
+              <div className="mt-7 grid grid-cols-2 gap-4">
+                {reels.map((post, i) => (
+                  <Reveal key={post.src} delay={i * 70}>
+                    <PostCard post={post} />
+                  </Reveal>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ---- top feed ---- */}
-        {posts.length > 0 && (
-          <div className="mt-14">
-            <Reveal>
-              <GroupHeading
-                label="Top Feed"
-                count={posts.length}
-                note="Carousel · crypto & saham"
-              />
-            </Reveal>
-            <div className="mt-7 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {posts.map((post, i) => (
-                <Reveal key={post.src} delay={(i % 5) * 60}>
-                  <PostCard post={post} />
-                </Reveal>
-              ))}
+          {posts.length > 0 && (
+            <div>
+              <Reveal delay={80}>
+                <GroupHeading label="Top Feed" count={posts.length} note="Carousel" />
+              </Reveal>
+              <div className="mt-7 grid grid-cols-3 gap-4">
+                {posts.map((post, i) => (
+                  <Reveal key={post.src} delay={i * 70}>
+                    <PostCard post={post} />
+                  </Reveal>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* ---- stats + follow ---- */}
         <Reveal>
-          <div className="u-panel mt-14 flex flex-col gap-9 rounded-2xl p-8 lg:flex-row lg:items-center lg:justify-between lg:p-10">
+          <div className="u-panel mt-16 flex flex-col gap-9 rounded-2xl p-8 lg:flex-row lg:items-center lg:justify-between lg:p-10">
             <div>
               <Eyebrow>Instagram · 30 hari terakhir</Eyebrow>
               <dl className="mt-6 grid grid-cols-2 gap-x-10 gap-y-6 sm:grid-cols-4">

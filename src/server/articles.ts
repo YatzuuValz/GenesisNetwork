@@ -1,7 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { db, type Row } from "./db";
-import type { Block, CategorySlug, SeriesSlug } from "@/data";
+import type { Article, Block, CategorySlug, SeriesSlug } from "@/data";
 
 export type ArticleStatus = "draft" | "published" | "changed";
 
@@ -195,4 +195,56 @@ export async function updateArticle(id: string, input: ArticleInput): Promise<vo
 
 export async function deleteArticle(id: string): Promise<void> {
   await db.execute({ sql: "DELETE FROM articles WHERE id = ?", args: [id] });
+}
+
+/* ------------------------------------------------------------------
+   Public reads. The site renders `Article`, the database stores
+   `StoredArticle`; this is the one place the two shapes meet.
+   ------------------------------------------------------------------ */
+
+export function toPublicArticle(a: StoredArticle): Article {
+  return {
+    slug: a.slug,
+    title: a.title,
+    accent: a.accent || undefined,
+    deck: a.deck,
+    category: a.category,
+    series: a.series,
+    cover: a.cover,
+    coverThumb: a.coverThumb,
+    aspect: "4/5",
+    publishedAt: a.publishedAt,
+    readingMinutes: 0,
+    author: { name: a.authorName, role: "Editorial", initials: "GN" },
+    tags: a.tags,
+    featured: a.featured,
+    body: a.body,
+  };
+}
+
+/**
+ * Every public article read goes through here.
+ *
+ * A missing or unreachable database is not an error: the GitHub Pages build has
+ * no `data/` directory at all, so it legitimately finds nothing and the section
+ * stays behind its Coming Soon page.
+ */
+export async function getPublishedArticles(): Promise<Article[]> {
+  try {
+    return (await listPublished()).map(toPublicArticle);
+  } catch {
+    return [];
+  }
+}
+
+export async function getPublishedArticle(slug: string): Promise<Article | null> {
+  try {
+    const { rows } = await db.execute({
+      sql: "SELECT * FROM articles WHERE slug = ? AND status IN ('published','changed')",
+      args: [slug],
+    });
+    return rows[0] ? toPublicArticle(toArticle(rows[0] as Row)) : null;
+  } catch {
+    return null;
+  }
 }

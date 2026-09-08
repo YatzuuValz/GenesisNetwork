@@ -15,37 +15,40 @@ interface NavItem {
   children?: { label: string; href: string; blurb: string }[];
 }
 
-const nav: NavItem[] = [
-  { label: "Home", href: "/" },
-  {
-    label: "Artikel",
-    href: "/artikel",
-    soon: !features.artikel,
-    children: features.artikel
-      ? categories.map((c) => ({
-          label: c.navLabel,
-          href: `/artikel/kategori/${c.slug}`,
-          blurb: c.blurb,
-        }))
-      : undefined,
-  },
-  {
-    label: "Free Research",
-    href: "/research",
-    soon: !features.research,
-    children: features.research
-      ? categories.map((c) => ({
-          label: `${c.navLabel} Research`,
-          href: `/research/kategori/${c.slug}`,
-          blurb: c.blurb,
-        }))
-      : undefined,
-  },
-  { label: "Partnership", href: "/partnership" },
-  { label: "About Us", href: "/about" },
-];
+function buildNav(hasArticles: boolean): NavItem[] {
+  return [
+    { label: "Home", href: "/" },
+    {
+      label: "Artikel",
+      href: "/artikel",
+      soon: !hasArticles,
+      children: hasArticles
+        ? categories.map((c) => ({
+            label: c.navLabel,
+            href: `/artikel/kategori/${c.slug}`,
+            blurb: c.blurb,
+          }))
+        : undefined,
+    },
+    {
+      label: "Free Research",
+      href: "/research",
+      soon: !features.research,
+      children: features.research
+        ? categories.map((c) => ({
+            label: `${c.navLabel} Research`,
+            href: `/research/kategori/${c.slug}`,
+            blurb: c.blurb,
+          }))
+        : undefined,
+    },
+    { label: "Partnership", href: "/partnership" },
+    { label: "About Us", href: "/about" },
+  ];
+}
 
-export default function Header() {
+export default function Header({ hasArticles = false }: { hasArticles?: boolean }) {
+  const nav = buildNav(hasArticles);
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);

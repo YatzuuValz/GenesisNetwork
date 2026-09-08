@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import ChromeGate from "@/components/layout/ChromeGate";
 import { withBasePath } from "@/components/ui/Img";
 import { site } from "@/data";
+import { getPublishedArticles } from "@/server/articles";
 import "./globals.css";
 
 const display = Plus_Jakarta_Sans({
@@ -57,14 +58,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // One query for the whole shell: nav and footer both need to know whether the
+  // Artikel section has anything in it yet.
+  const hasArticles = (await getPublishedArticles()).length > 0;
+
   return (
     <html
       lang="id"
       className={`${display.variable} ${sans.variable} ${serif.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="bg-ink-950 flex min-h-full flex-col">
-        <ChromeGate header={<Header />} footer={<Footer />}>
+        <ChromeGate
+          header={<Header hasArticles={hasArticles} />}
+          footer={<Footer hasArticles={hasArticles} />}
+        >
           {children}
         </ChromeGate>
       </body>

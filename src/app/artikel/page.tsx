@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { categories, countByCategory, features, getArticles, articles as allArticles } from "@/data";
+import { categories } from "@/data";
+import { getPublishedArticles } from "@/server/articles";
 import { ArticleCard, LeadArticleCard } from "@/components/article/ArticleCard";
 import CategoryTabs from "@/components/article/CategoryTabs";
 import ComingSoon from "@/components/layout/ComingSoon";
@@ -12,8 +13,11 @@ export const metadata: Metadata = {
     "Crypto, saham, dan makroekonomi — dijelaskan sederhana untuk pembaca yang tidak punya waktu untuk jargon.",
 };
 
-export default function ArtikelIndexPage() {
-  if (!features.artikel) {
+export default async function ArtikelIndexPage() {
+  // The section switches itself on: no published article, no index page.
+  const articles = await getPublishedArticles();
+
+  if (articles.length === 0) {
     return (
       <ComingSoon
         eyebrow="Artikel"
@@ -29,11 +33,12 @@ export default function ArtikelIndexPage() {
     );
   }
 
-  const articles = getArticles();
   const [lead, ...rest] = articles;
 
-  const counts: Record<string, number> = { "": allArticles.length };
-  for (const c of categories) counts[c.slug] = countByCategory(c.slug);
+  const counts: Record<string, number> = { "": articles.length };
+  for (const c of categories) {
+    counts[c.slug] = articles.filter((a) => a.category === c.slug).length;
+  }
 
   return (
     <>
@@ -48,7 +53,7 @@ export default function ArtikelIndexPage() {
               <div key={c.slug} className="border-t border-white/10 pt-4">
                 <dt className="u-eyebrow text-bone-600 text-[0.5625rem]">{c.navLabel}</dt>
                 <dd className="u-num text-bone-50 mt-2 text-2xl">
-                  {String(countByCategory(c.slug)).padStart(2, "0")}
+                  {String(articles.filter((a) => a.category === c.slug).length).padStart(2, "0")}
                 </dd>
               </div>
             ))}

@@ -1,15 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  categories,
-  countByCategory,
-  disabledRouteParams,
-  features,
-  getArticles,
-  getCategory,
-  articles as allArticles,
-  type CategorySlug,
-} from "@/data";
+import { categories, getCategory } from "@/data";
+import { getPublishedArticles } from "@/server/articles";
 import { ArticleCard } from "@/components/article/ArticleCard";
 import CategoryTabs from "@/components/article/CategoryTabs";
 import PageHero from "@/components/layout/PageHero";
@@ -18,10 +10,10 @@ import Reveal from "@/components/ui/Reveal";
 // `output: export` rejects an empty generateStaticParams, so while the section
 // is switched off we emit a single throwaway route that immediately 404s. No
 // real slug is built, and nothing links here.
-export function generateStaticParams() {
-  return features.artikel
-    ? categories.map((c) => ({ category: c.slug }))
-    : disabledRouteParams({ category: "segera-hadir" });
+export async function generateStaticParams() {
+  const published = await getPublishedArticles();
+  if (published.length > 0) return categories.map((c) => ({ category: c.slug }));
+  return process.env.DEPLOY_TARGET === "github-pages" ? [{ category: "segera-hadir" }] : [];
 }
 
 export async function generateMetadata({ params }: PageProps<"/artikel/kategori/[category]">): Promise<Metadata> {
@@ -33,14 +25,17 @@ export async function generateMetadata({ params }: PageProps<"/artikel/kategori/
 
 export default async function CategoryPage({ params }: PageProps<"/artikel/kategori/[category]">) {
   const { category } = await params;
-  if (!features.artikel) notFound();
-
   const cat = getCategory(category);
   if (!cat) notFound();
 
-  const articles = getArticles({ category: cat.slug as CategorySlug });
-  const counts: Record<string, number> = { "": allArticles.length };
-  for (const c of categories) counts[c.slug] = countByCategory(c.slug);
+  const all = await getPublishedArticles();
+  if (all.length === 0) notFound();
+
+  const articles = all.filter((a) => a.category === cat.slug);
+  const counts: Record<string, number> = { "": all.length };
+  for (const c of categories) {
+    counts[c.slug] = all.filter((a) => a.category === c.slug).length;
+  }
 
   return (
     <>

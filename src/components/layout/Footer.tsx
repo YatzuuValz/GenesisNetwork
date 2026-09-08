@@ -4,10 +4,11 @@ import { categories, channels, features, site } from "@/data";
 import { Arrow, Bloom } from "@/components/ui/primitives";
 
 /** Category links would land on empty pages while a section is switched off. */
-const columns = [
+function buildColumns(hasArticles: boolean) {
+  return [
   {
     title: "Artikel",
-    links: features.artikel
+    links: hasArticles
       ? categories.map((c) => ({ label: c.navLabel, href: `/artikel/kategori/${c.slug}` }))
       : [{ label: "Segera hadir", href: "/artikel" }],
   },
@@ -28,9 +29,11 @@ const columns = [
       { label: "Media Kit", href: "/partnership#formats" },
     ],
   },
-];
+  ];
+}
 
-export default function Footer() {
+export default function Footer({ hasArticles = false }: { hasArticles?: boolean }) {
+  const columns = buildColumns(hasArticles);
   return (
     <footer className="u-noise relative isolate mt-32 overflow-hidden border-t border-white/[0.07]">
       <Bloom className="-top-40 left-1/2 h-80 w-[46rem] -translate-x-1/2" opacity={0.16} />
