@@ -1,3 +1,4 @@
+import { WA_DISPLAY } from "@/lib/whatsapp";
 import market from "./market.json";
 import type {
   Category,
@@ -24,6 +25,8 @@ export const site = {
   youtubeHandle: "@GenesisNetworkID",
   email: "hello@genesisnetwork.id",
   partnershipEmail: "partnership@genesisnetwork.id",
+  /** Deep-link target for the partnership form — see src/lib/whatsapp.ts. */
+  whatsapp: WA_DISPLAY,
   city: "Jakarta, Indonesia",
 } as const;
 

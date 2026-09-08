@@ -60,6 +60,21 @@ const statements = [
      updated_at   TEXT NOT NULL
    )`,
 
+  `CREATE TABLE IF NOT EXISTS leads (
+     id         TEXT PRIMARY KEY,
+     name       TEXT NOT NULL,
+     company    TEXT NOT NULL,
+     email      TEXT NOT NULL,
+     phone      TEXT NOT NULL DEFAULT '',
+     stream     TEXT NOT NULL DEFAULT '',
+     message    TEXT NOT NULL DEFAULT '',
+     status     TEXT NOT NULL DEFAULT 'new',
+     source     TEXT NOT NULL DEFAULT 'partnership',
+     created_at TEXT NOT NULL
+   )`,
+
+  `CREATE INDEX IF NOT EXISTS leads_created ON leads(created_at DESC)`,
+
   `CREATE INDEX IF NOT EXISTS articles_status ON articles(status)`,
   `CREATE INDEX IF NOT EXISTS articles_updated ON articles(updated_at DESC)`,
 ];

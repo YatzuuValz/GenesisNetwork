@@ -151,16 +151,43 @@ Judul yang baru kamu ubah harus muncul di baris paling atas.
 
 ---
 
+## 8. Form partnership dan Leads
+
+Buka `http://localhost:3000/partnership`, gulir ke bawah ke form.
+
+| Langkah | Yang harus terjadi |
+| --- | --- |
+| Isi Nama, Brand, Email, pilih jenis kerja sama, tulis pesan | Penghitung karakter di bawah kolom pesan ikut naik, berhenti di 700 |
+| Klik **Lanjut ke WhatsApp** | Tab baru terbuka ke WhatsApp dengan pesan sudah tersusun rapi — **belum terkirim**, kamu yang menekan kirim |
+| Kembali ke tab situs | Muncul panel "WhatsApp sudah dibuka" dengan tautan cadangan kalau tabnya diblokir |
+| Buka Studio → tab **Leads** | Pengajuan tadi sudah ada di sana, ditandai **Baru** |
+
+Yang penting dipahami: **leadnya tercatat saat form dikirim, bukan saat pesan
+WhatsApp terkirim.** Jadi kalau orangnya berubah pikiran dan tidak menekan kirim,
+datanya tetap ada di Studio.
+
+Di tab Leads, klik satu baris untuk membukanya: email bisa diklik, nomor WhatsApp
+(kalau diisi) langsung membuka chat ke orang itu, dan status bisa diubah jadi
+Dihubungi / Deal / Arsip.
+
+**Tombol "Chat langsung"** di bawah form untuk orang yang malas isi apa pun —
+langsung buka WhatsApp tanpa lewat database.
+
+> Di situs GitHub Pages, tombol WhatsApp tetap jalan tapi leadnya **tidak
+> tersimpan** — situs statis tidak punya tempat menyimpan. Pencatatan baru
+> hidup setelah situs dipindah ke host yang punya server.
+
+---
+
 ## Yang BELUM jalan — jangan dilaporkan sebagai bug
 
 | | Keterangan |
 | --- | --- |
-| **Situs publik tidak berubah** | Klik Terbitkan tidak mengubah `/artikel`. Situs publik masih membaca file `src/data/articles.ts`, bukan database. Ini pekerjaan berikutnya. |
 | **Unggah gambar** | Pustaka media masih daftar tetap dari 14 artwork lama. Tombol "Ganti gambar" belum bisa mengunggah file. |
-| **Tab Riset, Media, Tim** | Masih rangka — belum bisa diklik. Baru Artikel yang punya CRUD. |
+| **Tab Riset, Media, Tim** | Masih rangka — belum bisa diklik. Yang jalan baru Artikel dan Leads. |
 | **Tambah pengguna** | Hanya lewat terminal (`npm run db:admin`). |
 | **Riwayat versi** | Belum ada. Menyimpan menimpa yang lama. |
-| **Belum online** | Hanya jalan saat `npm run dev` di komputermu. Rekan tim belum bisa ikut menulis. |
+| **Belum online** | Hanya jalan saat `npm run dev` di komputermu. Rekan tim belum bisa ikut menulis, dan lead dari situs yang sudah live belum tercatat. |
 
 ---
 

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import AdminApp from "@/components/admin/AdminApp";
 import { currentUser } from "@/server/auth";
 import { listArticles } from "@/server/articles";
+import { listLeads } from "@/server/leads";
 
 /**
  * The Studio needs a server, so it is absent from the static export that ships
@@ -21,5 +22,7 @@ export default async function AdminPage() {
   const user = await currentUser();
   if (!user) redirect("/admin/login");
 
-  return <AdminApp user={user} articles={await listArticles()} />;
+  const [articles, leads] = await Promise.all([listArticles(), listLeads()]);
+
+  return <AdminApp user={user} articles={articles} leads={leads} />;
 }

@@ -6,21 +6,29 @@ import Image from "@/components/ui/Img";
 import { site } from "@/data";
 import type { SessionUser } from "@/server/auth";
 import type { StoredArticle } from "@/server/articles";
+import type { Lead } from "@/server/leads";
 import ArticleList from "./ArticleList";
 import ArticleEditor from "./ArticleEditor";
+import LeadList from "./LeadList";
+
+type Tab = "artikel" | "leads";
 
 export default function AdminApp({
   user,
   articles,
+  leads,
 }: {
   user: SessionUser;
   articles: StoredArticle[];
+  leads: Lead[];
 }) {
   const router = useRouter();
+  const [tab, setTab] = useState<Tab>("artikel");
   const [openId, setOpenId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const current = articles.find((a) => a.id === openId) ?? null;
+  const freshLeads = leads.filter((l) => l.status === "new").length;
 
   /** Server is the source of truth: after any write, re-read rather than guess. */
   const refresh = () => router.refresh();
@@ -59,20 +67,25 @@ export default function AdminApp({
               height={512}
               className="size-7 rounded-lg ring-1 ring-white/10"
             />
-            <span className="u-eyebrow text-bone-400 text-[0.5625rem]">
-              {site.name} · Studio
-            </span>
+            <span className="u-eyebrow text-bone-400 text-[0.5625rem]">{site.name} · Studio</span>
           </div>
 
           <div className="flex items-center gap-4">
             <nav className="hidden gap-1 sm:flex">
-              {["Artikel", "Riset", "Media", "Tim"].map((t, i) => (
-                <span
-                  key={t}
-                  className={`rounded-full px-3 py-1.5 text-xs ${
-                    i === 0 ? "bg-white/[0.06] text-bone-100" : "text-bone-600"
-                  }`}
-                >
+              <TabButton active={tab === "artikel"} onClick={() => setTab("artikel")}>
+                Artikel
+              </TabButton>
+              <TabButton
+                active={tab === "leads"}
+                onClick={() => setTab("leads")}
+                badge={freshLeads}
+              >
+                Leads
+              </TabButton>
+
+              {/* Not built yet — shown so the shape of the Studio is legible. */}
+              {["Riset", "Media", "Tim"].map((t) => (
+                <span key={t} className="text-bone-700 rounded-full px-3 py-1.5 text-xs">
                   {t}
                 </span>
               ))}
@@ -93,7 +106,9 @@ export default function AdminApp({
       </header>
 
       <main className="mx-auto max-w-[1240px] px-5 py-8 sm:px-8">
-        {current ? (
+        {tab === "leads" ? (
+          <LeadList leads={leads} onChanged={refresh} />
+        ) : current ? (
           <ArticleEditor
             article={current}
             onBack={() => {
@@ -112,5 +127,34 @@ export default function AdminApp({
         )}
       </main>
     </div>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  badge = 0,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  badge?: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs transition-colors ${
+        active ? "bg-white/[0.06] text-bone-100" : "text-bone-500 hover:text-bone-200"
+      }`}
+    >
+      {children}
+      {badge > 0 && (
+        <span className="u-num bg-volt-500 grid min-w-4 place-items-center rounded-full px-1 text-[0.5625rem] leading-4 font-medium text-white">
+          {badge}
+        </span>
+      )}
+    </button>
   );
 }

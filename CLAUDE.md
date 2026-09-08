@@ -196,7 +196,9 @@ vague "empowering your journey" copy.
 
 - Founder **bios** are filler copy
 - Article and research **bodies** were written for the mockup, not by Genesis
-- The **inquiry form** posts nowhere; it shows a "not connected" state
+- The **inquiry form's WhatsApp hand-off is real everywhere**, but on the live
+  GitHub Pages site the lead is **not recorded** — there is no server there.
+  Don't assume the Studio has every enquiry until the site moves hosts (§8c)
 - No group team photo yet — the founders default panel renders a 2×2 mosaic of
   the four portraits instead
 
@@ -231,9 +233,9 @@ Either way the migration is the same shape:
 Because `Prose` switches exhaustively over `Block`, a new block type surfaces as
 a TypeScript error rather than a blank space on the page.
 
-**Leads / CRM:** the partnership form can post to Formspree, Tally or a Payload
-collection. A static site can absolutely collect leads via a third-party endpoint
-— no server needed.
+**Leads / CRM:** already built — the form writes to the `leads` table and the
+Studio has a Leads tab. No third-party form service is needed. What is still
+missing is a notification when one arrives; see §10.
 
 ---
 
@@ -266,6 +268,7 @@ real login.
 src/server/db.ts         libSQL client (SQLite locally, Turso when hosted)
 src/server/auth.ts       scrypt password hashing, DB-backed sessions
 src/server/articles.ts   article repository — the only place SQL lives
+src/server/leads.ts      partnership leads: validation + repository
 src/app/api/**/route.mts route handlers, session-checked on every request
 scripts/migrate.mjs      schema + first-run seed from articles.ts
 scripts/create-admin.mjs creates an admin, password from the environment
@@ -286,6 +289,37 @@ merely rejected. Login says only "email atau password salah", never which half.
 **Slugs.** The slug follows the title only while an article has never been
 published. After that it is frozen, because changing it breaks every link
 already shared.
+
+### The partnership form
+
+The form hands off to WhatsApp rather than emailing or auto-notifying, because
+that inverts who has to make the next move: instead of the team getting a ping
+about a cold lead they must then chase, the prospect arrives in the team's inbox
+from their own number with the details already typed.
+
+```
+form → POST /api/leads (recorded)  →  wa.me link opens with a composed message
+                                      ↑ the person still presses send
+```
+
+The link is a plain `wa.me` deep link — no Meta Cloud API, no token, no
+dedicated number. Verified: `wa.me/<number>?text=…` 302s to
+`api.whatsapp.com/send/` for both desktop and Android user agents, so WhatsApp
+itself picks the app, WhatsApp Web, or the desktop client.
+
+Three details that are load-bearing:
+
+- **The POST is not awaited.** Awaiting it would end the user gesture and the
+  browser would block the WhatsApp tab. `keepalive` lets it finish afterwards.
+- **`POST /api/leads` is the only unauthenticated write on the site** — it is a
+  public form. A honeypot field, a per-IP rate limit and hard length caps stand
+  in for auth. The rate limiter is in-process, so on a serverless host it is a
+  speed bump rather than a wall; the honeypot and the caps do the real work.
+- **A lead is recorded before the hand-off**, so someone who fills the form and
+  never presses send in WhatsApp is still in the Studio.
+
+On GitHub Pages there is no `/api/leads`, the POST fails, and the WhatsApp
+hand-off still works. Recording leads is what needs the server.
 
 ### Why the API routes are named `route.mts`
 
@@ -338,7 +372,12 @@ Verified by testing, not assumed:
    `backdrop-filter` re-blurs **every scroll frame**. This was measured
    structurally but **never confirmed as actual lag on a real device** — the FPS
    measurement attempt timed out. Deferred by choice, cheap to fix if it bites.
-7. **Inquiry form backend.**
+7. **Lead notification** — the Studio shows leads, but nothing pushes an alert
+   when one arrives. Email (Resend free tier) or a Telegram bot are both free;
+   WhatsApp Cloud API is not, and it would cost a dedicated phone number that
+   can no longer be used in the normal WhatsApp app.
+8. **WhatsApp Business app** — the free app's greeting and away messages give
+   an automatic first reply with no infrastructure at all. Worth switching on.
 
 ---
 

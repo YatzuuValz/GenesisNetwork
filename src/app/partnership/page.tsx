@@ -11,7 +11,8 @@ import {
 } from "@/data";
 import PageHero from "@/components/layout/PageHero";
 import InquiryForm from "@/components/partnership/InquiryForm";
-import { Bloom, Eyebrow, StatBlock } from "@/components/ui/primitives";
+import { Bloom, Eyebrow, StatBlock, WhatsAppGlyph } from "@/components/ui/primitives";
+import { waLink } from "@/lib/whatsapp";
 import Reveal from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
@@ -277,6 +278,18 @@ export default function PartnershipPage() {
                       className="text-bone-100 hover:text-volt-400 mt-2 block text-sm transition-colors"
                     >
                       {site.partnershipEmail}
+                    </a>
+                  </div>
+                  <div className="border-t border-white/10 pt-5">
+                    <div className="u-eyebrow text-bone-600 text-[0.5rem]">WhatsApp</div>
+                    <a
+                      href={waLink()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-bone-100 hover:text-volt-400 mt-2 flex items-center gap-2 text-sm transition-colors"
+                    >
+                      <WhatsAppGlyph className="size-3.5" />
+                      {site.whatsapp}
                     </a>
                   </div>
                   <div className="border-t border-white/10 pt-5">
