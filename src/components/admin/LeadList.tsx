@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Lead, LeadStatus } from "@/server/leads";
+import { formatFetchedAt } from "@/data";
 import { toWaNumber, waLink } from "@/lib/whatsapp";
 import { WhatsAppGlyph } from "@/components/ui/primitives";
 
@@ -20,16 +21,6 @@ const statusTone: Record<LeadStatus, string> = {
 };
 
 const ORDER: LeadStatus[] = ["new", "contacted", "won", "archived"];
-
-/** "9 Sep 2026 · 14:30" — same hand-formatting rule as the rest of the site. */
-function formatWhen(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  // prettier-ignore
-  const months = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 export default function LeadList({ leads, onChanged }: { leads: Lead[]; onChanged: () => void }) {
   const [openId, setOpenId] = useState<string | null>(null);
@@ -106,7 +97,7 @@ export default function LeadList({ leads, onChanged }: { leads: Lead[]; onChange
                       <span className="text-bone-500 truncate text-xs">{lead.name}</span>
                     </div>
                     <div className="text-bone-600 mt-1.5 flex flex-wrap items-center gap-x-2.5 text-[0.6875rem]">
-                      <span className="u-num">{formatWhen(lead.createdAt)}</span>
+                      <span className="u-num">{formatFetchedAt(lead.createdAt)}</span>
                       {lead.stream && (
                         <>
                           <span aria-hidden>·</span>

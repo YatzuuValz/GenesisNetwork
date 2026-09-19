@@ -9,7 +9,7 @@ will replace them.
 
 ```bash
 npm run dev     # http://localhost:3000
-npm run build   # 12 static pages while Artikel/Research are switched off
+npm run build   # server build: site + Studio + API
 npm run lint
 ```
 

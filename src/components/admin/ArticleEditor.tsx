@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "@/components/ui/Img";
-import { categories, seriesList } from "@/data";
+import { categories, seriesList, wibDate } from "@/data";
 import type { Block } from "@/data";
 import BlockEditor from "./BlockEditor";
 import ArticlePreview from "./ArticlePreview";
@@ -97,9 +97,23 @@ export default function ArticleEditor({
       return;
     }
 
+    const was = status;
     setStatus(nextStatus);
     onSaved();
-    notice(nextStatus === "published" ? "Tersimpan dan terbit." : "Draft tersimpan.");
+    notice(
+      nextStatus === "draft"
+        ? was === "published"
+          ? "Ditarik dari situs — sekarang draft, pembaca tidak bisa melihatnya."
+          : "Draft tersimpan."
+        : was === "published"
+          ? "Perubahan tersimpan dan langsung tayang."
+          : "Tersimpan dan terbit.",
+    );
+  }
+
+  function unpublish() {
+    if (!confirm(`Tarik "${title}" dari situs? Artikel kembali jadi draft dan hilang dari halaman publik.`)) return;
+    save("draft");
   }
 
   async function remove() {
@@ -134,22 +148,48 @@ export default function ArticleEditor({
           >
             Pratinjau
           </button>
-          <button
-            type="button"
-            onClick={() => save("draft")}
-            disabled={busy}
-            className="text-bone-300 hover:text-bone-50 rounded-full border border-white/12 px-4 py-2 text-xs transition-colors hover:border-white/25"
-          >
-            {busy ? "Menyimpan…" : "Simpan draft"}
-          </button>
-          <button
-            type="button"
-            onClick={() => save("published")}
-            disabled={busy}
-            className="bg-volt-500 hover:bg-volt-400 rounded-full px-5 py-2 text-xs font-semibold text-white transition-colors"
-          >
-            Terbitkan
-          </button>
+          {status === "published" ? (
+            <>
+              {/* A published article is edited in place, so the everyday action
+                  keeps it live. Taking it down is separate and confirmed —
+                  "save draft" used to do that silently. */}
+              <button
+                type="button"
+                onClick={unpublish}
+                disabled={busy}
+                className="text-bone-400 hover:text-bone-50 rounded-full border border-white/12 px-4 py-2 text-xs transition-colors hover:border-white/25"
+              >
+                Tarik dari situs
+              </button>
+              <button
+                type="button"
+                onClick={() => save("published")}
+                disabled={busy}
+                className="bg-volt-500 hover:bg-volt-400 rounded-full px-5 py-2 text-xs font-semibold text-white transition-colors"
+              >
+                {busy ? "Menyimpan…" : "Simpan perubahan"}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => save("draft")}
+                disabled={busy}
+                className="text-bone-300 hover:text-bone-50 rounded-full border border-white/12 px-4 py-2 text-xs transition-colors hover:border-white/25"
+              >
+                {busy ? "Menyimpan…" : "Simpan draft"}
+              </button>
+              <button
+                type="button"
+                onClick={() => save("published")}
+                disabled={busy}
+                className="bg-volt-500 hover:bg-volt-400 rounded-full px-5 py-2 text-xs font-semibold text-white transition-colors"
+              >
+                Terbitkan
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -225,20 +265,20 @@ export default function ArticleEditor({
         <div className="min-w-0 space-y-7">
           <Panel title="Penerbitan">
             <Field label="Status">
-              <Select value={status} onChange={(e) => setStatus(e.target.value as Status)}>
-                <option value="draft" className="bg-ink-900">
-                  Draft
-                </option>
-                <option value="published" className="bg-ink-900">
-                  Terbit
-                </option>
-                <option value="changed" className="bg-ink-900">
-                  Ada perubahan
-                </option>
-              </Select>
+              <div className="flex items-start gap-3">
+                <StatusBadge status={status} />
+                <p className="text-bone-500 text-[0.75rem] leading-relaxed">
+                  {status === "published"
+                    ? "Tayang di situs. Perubahan yang disimpan langsung terlihat pembaca."
+                    : "Belum tayang. Hanya tim yang bisa melihatnya."}
+                </p>
+              </div>
             </Field>
 
-            <Field label="Tanggal terbit" hint="Isi tanggal ke depan untuk terbit terjadwal.">
+            <Field
+              label="Tanggal terbit"
+              hint="Tanggal yang tampil di artikel. Artikel tayang saat Terbitkan ditekan — belum ada terbit terjadwal."
+            >
               <TextInput
                 type="date"
                 value={publishedAt}
@@ -247,7 +287,7 @@ export default function ArticleEditor({
             </Field>
 
             <Field label="Terakhir diubah" derived>
-              <Derived value={article.updatedAt.slice(0, 10)} />
+              <Derived value={wibDate(article.updatedAt)} />
             </Field>
 
             <div className="border-t border-white/[0.07] pt-3">

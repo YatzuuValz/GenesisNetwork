@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentUser } from "@/server/auth";
 import { createLead, listLeads, normalizeLead } from "@/server/leads";
+import { clientIp, createLimiter } from "@/server/rate-limit";
 
 /**
  * The partnership inquiry endpoint.
@@ -16,47 +17,15 @@ import { createLead, listLeads, normalizeLead } from "@/server/leads";
  * is not public business.
  */
 
-const WINDOW_MS = 10 * 60_000;
-const MAX_PER_WINDOW = 5;
-
-/**
- * In-process, so on a serverless host each instance counts separately — this
- * is a speed bump against a naive flood, not a wall. The honeypot and the size
- * caps are what actually keep the table clean.
- */
-const hits = new Map<string, number[]>();
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-
-  if (recent.length >= MAX_PER_WINDOW) {
-    hits.set(ip, recent);
-    return true;
-  }
-
-  recent.push(now);
-  hits.set(ip, recent);
-
-  // Keep the map from growing without bound on a long-lived server.
-  if (hits.size > 5000) {
-    for (const [key, times] of hits) {
-      if (times.every((t) => now - t >= WINDOW_MS)) hits.delete(key);
-    }
-  }
-
-  return false;
-}
-
-function clientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  return forwarded?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
-}
+/** Every submission spends the budget, valid or not — junk is what it is for. */
+const submissions = createLimiter({ windowMs: 10 * 60_000, max: 5 });
 
 export async function POST(request: Request) {
-  if (rateLimited(clientIp(request))) {
+  const ip = clientIp(request);
+  if (submissions.blocked(ip)) {
     return NextResponse.json({ error: "terlalu banyak pengajuan" }, { status: 429 });
   }
+  submissions.hit(ip);
 
   const body = await request.json().catch(() => null);
 

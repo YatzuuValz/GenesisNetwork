@@ -6,10 +6,13 @@ import { listArticles } from "@/server/articles";
 import { listLeads } from "@/server/leads";
 
 /**
- * The Studio needs a server, so it is absent from the static export that ships
- * to GitHub Pages. `ENABLE_STUDIO` opts it in on a host that has one.
+ * The Studio needs a server, so the static export that ships to GitHub Pages
+ * leaves it out. Every server build has it; the login is what protects it.
+ *
+ * This used to be opt-in through an ENABLE_STUDIO variable, which had to be set
+ * at build time — set only at runtime, the page stayed a prerendered 404.
  */
-const enabled = process.env.NODE_ENV !== "production" || Boolean(process.env.ENABLE_STUDIO);
+const enabled = process.env.DEPLOY_TARGET !== "github-pages";
 
 export const metadata: Metadata = {
   title: "Studio",

@@ -1,9 +1,18 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { revalidatePath } from "next/cache";
 import { db, type Row } from "./db";
+import { wibDate } from "@/data";
 import type { Article, Block, CategorySlug, SeriesSlug } from "@/data";
 
-export type ArticleStatus = "draft" | "published" | "changed";
+/**
+ * There is one copy of each article, so an edit to a published article is live
+ * the moment it is saved. An earlier "changed" status claimed otherwise; rows
+ * that still carry it are read as published, which is what they always were.
+ */
+export type ArticleStatus = "draft" | "published";
+
+const asStatus = (v: unknown): ArticleStatus => (v === "draft" ? "draft" : "published");
 
 export interface StoredArticle {
   id: string;
@@ -51,7 +60,7 @@ function toArticle(row: Row): StoredArticle {
     cover: str(row.cover),
     coverThumb: str(row.cover_thumb),
     coverAlt: str(row.cover_alt),
-    status: str(row.status) as ArticleStatus,
+    status: asStatus(row.status),
     featured: Number(row.featured) === 1,
     tags: parseJson<string[]>(row.tags, []),
     body: parseJson<Block[]>(row.body, []),
@@ -114,6 +123,17 @@ async function uniqueSlug(base: string, exceptId?: string): Promise<string> {
   return `${base}-${Date.now()}`;
 }
 
+/**
+ * Public pages are prerendered, and the root layout reads the article list (the
+ * nav switches Artikel on and off), so every page depends on it. Each write
+ * therefore invalidates the whole site; pages re-render on their next visit.
+ * Without this a hosted site keeps serving what existed at build time —
+ * including articles since unpublished or deleted.
+ */
+function invalidatePublicPages() {
+  revalidatePath("/", "layout");
+}
+
 export async function createArticle(input: ArticleInput, authorName: string): Promise<string> {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -144,12 +164,13 @@ export async function createArticle(input: ArticleInput, authorName: string): Pr
       input.seoTitle ?? null,
       input.seoDesc ?? null,
       authorName,
-      input.publishedAt || now.slice(0, 10),
+      input.publishedAt || wibDate(now),
       now,
       now,
     ],
   });
 
+  invalidatePublicPages();
   return id;
 }
 
@@ -180,7 +201,7 @@ export async function updateArticle(id: string, input: ArticleInput): Promise<vo
       input.category ?? existing.category,
       input.series ?? existing.series,
       input.coverAlt ?? existing.coverAlt,
-      input.status ?? existing.status,
+      input.status === undefined ? existing.status : asStatus(input.status),
       (input.featured ?? existing.featured) ? 1 : 0,
       JSON.stringify(input.tags ?? existing.tags),
       JSON.stringify(input.body ?? existing.body),
@@ -191,10 +212,13 @@ export async function updateArticle(id: string, input: ArticleInput): Promise<vo
       id,
     ],
   });
+
+  invalidatePublicPages();
 }
 
 export async function deleteArticle(id: string): Promise<void> {
   await db.execute({ sql: "DELETE FROM articles WHERE id = ?", args: [id] });
+  invalidatePublicPages();
 }
 
 /* ------------------------------------------------------------------

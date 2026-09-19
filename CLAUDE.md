@@ -41,7 +41,7 @@ Genesis Rankings. This is why `/partnership` is the most substantial page.
 ## 2. Where the project stands
 
 Built from scratch in this repo. Eight commits, all deployed. Current build ships
-**12 static pages**.
+**13 pages** in the export.
 
 | Page | State |
 | --- | --- |
@@ -60,8 +60,9 @@ long-form on the web yet. Nothing was deleted.
 
 ## 3. Stack and how it works
 
-**Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4.** No backend,
-no database. Deployed as a fully static export to GitHub Pages.
+**Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4.** Two builds
+from one repo: a static export for GitHub Pages (no server, no database), and a
+server build with the Studio, the API and a libSQL database — see §8c.
 
 ### Data flow
 
@@ -308,6 +309,26 @@ the same time. Sessions are random tokens in the database, carried by an
 httpOnly cookie — unreadable from JavaScript — and expired rows are deleted, not
 merely rejected. Login says only "email atau password salah", never which half.
 
+**Login is rate-limited.** Ten failed attempts per IP per 15 minutes, then
+429 — even for the right password — until the window passes. Successful logins
+don't count. `clientIp()` trusts `cf-connecting-ip` first, then the *last*
+`x-forwarded-for` entry: the first entry is client-controlled, and trusting it
+let a test walk straight past the limit with a made-up header.
+
+**Publishing reaches a hosted site through `revalidatePath`.** Public pages are
+prerendered at build, and the root layout reads the article list, so every page
+depends on it. Each write in `src/server/articles.ts` calls
+`revalidatePath("/", "layout")`. Without it a hosted site served build-time
+content forever — including articles since unpublished or deleted. `npm run dev`
+renders every request fresh, which is why this never showed locally. Verified
+against `next start`: unpublish → gone from `/artikel` and the page 404s;
+republish → back.
+
+**Status is draft or published, nothing else.** There is one copy of each
+article, so saving a published article publishes the change. A former
+"Ada perubahan" status implied a private draft copy that never existed; legacy
+rows carrying it read as published. There is no scheduled publishing either.
+
 **Slugs.** The slug follows the title only while an article has never been
 published. After that it is frozen, because changing it breaks every link
 already shared.
@@ -418,7 +439,8 @@ Verified by testing, not assumed:
 
 ```bash
 npm run dev                                  # localhost:3000
-npm run build                                # 12 static pages
-DEPLOY_TARGET=github-pages npm run build     # what CI ships
+npm run build                                # server build (Studio + API)
+DEPLOY_TARGET=github-pages npm run build     # what CI ships (13 pages)
+node scripts/serve-export.mjs                # serve out/ under /GenesisNetwork/, as Pages does
 node scripts/fetch-market.mjs                # refresh quotes locally
 ```

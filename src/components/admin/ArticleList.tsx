@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "@/components/ui/Img";
-import { categories, formatDateShort, getSeries } from "@/data";
+import { categories, formatDateShort, getSeries, wibDate } from "@/data";
 import type { StoredArticle } from "@/server/articles";
 import { Arrow } from "@/components/ui/primitives";
 import { StatusBadge, type Status } from "./fields";
@@ -56,7 +56,6 @@ export default function ArticleList({
     { value: "all", label: "Semua" },
     { value: "published", label: "Terbit" },
     { value: "draft", label: "Draft" },
-    { value: "changed", label: "Ada perubahan" },
   ];
 
   return (
@@ -224,7 +223,7 @@ export default function ArticleList({
                   </span>
 
                   <span className="u-num text-bone-500 hidden text-[0.6875rem] lg:block">
-                    {formatDateShort(a.updatedAt.slice(0, 10))}
+                    {formatDateShort(wibDate(a.updatedAt))}
                   </span>
 
                   <span className="hidden justify-end lg:flex">

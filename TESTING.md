@@ -85,6 +85,21 @@ database, bukan cuma tersimpan di layar.
 Ini disengaja. Setelah terbit, mengubah slug akan merusak semua tautan yang sudah
 tersebar.
 
+### Artikel yang sudah terbit
+
+Tombolnya berubah setelah artikel terbit — dan itu disengaja:
+
+| Tombol | Yang terjadi |
+| --- | --- |
+| **Simpan perubahan** | Tersimpan dan **langsung tayang**. Tidak ada salinan draft terpisah — yang kamu simpan itulah yang dibaca orang. |
+| **Tarik dari situs** | Minta konfirmasi, lalu artikel kembali jadi draft dan hilang dari halaman publik. |
+
+Dulu tombol "Simpan draft" pada artikel yang sudah terbit diam-diam menariknya
+dari situs. Sekarang menarik artikel harus disengaja.
+
+**Tanggal terbit** hanya tanggal yang tampil di artikel. Belum ada terbit
+terjadwal — artikel tayang saat Terbitkan ditekan, apa pun tanggalnya.
+
 ---
 
 ## 4. Blok isi artikel

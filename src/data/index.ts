@@ -112,6 +112,15 @@ export function formatChange(change: number | null): string {
 
 const WIB_OFFSET_MS = 7 * 60 * 60 * 1000;
 
+/**
+ * The calendar date in Jakarta, as YYYY-MM-DD. `iso.slice(0, 10)` gives the UTC
+ * date, which is yesterday for anything saved before 07:00 WIB.
+ */
+export function wibDate(iso: string): string {
+  const t = Date.parse(iso);
+  return Number.isNaN(t) ? iso.slice(0, 10) : new Date(t + WIB_OFFSET_MS).toISOString().slice(0, 10);
+}
+
 /** "30 Agustus 2026, 15:12 WIB" — computed, not locale-dependent. */
 export function formatFetchedAt(iso: string): string {
   const d = new Date(new Date(iso).getTime() + WIB_OFFSET_MS);

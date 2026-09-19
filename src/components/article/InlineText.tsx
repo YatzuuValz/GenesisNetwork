@@ -44,6 +44,15 @@ export function parseInline(text: string): ReactNode[] {
       const href = token.slice(split + 2, -1);
       const external = /^https?:\/\//.test(href);
 
+      // Only web links, email, and paths on this site become links. Anything
+      // else — `javascript:`, `data:` — stays visible as plain text rather than
+      // becoming something a reader can click.
+      if (!external && !/^(mailto:|\/|#)/.test(href)) {
+        nodes.push(token);
+        last = index + token.length;
+        continue;
+      }
+
       nodes.push(
         external ? (
           <a

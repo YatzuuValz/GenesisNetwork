@@ -58,7 +58,7 @@ export default function AdminApp({
   return (
     <div className="min-h-screen">
       <header className="border-b border-white/[0.07]">
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-6 px-5 py-3.5 sm:px-8">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-3 px-4 py-3.5 sm:gap-6 sm:px-8">
           <div className="flex items-center gap-3">
             <Image
               src="/brand/gn-tile.png"
@@ -67,11 +67,13 @@ export default function AdminApp({
               height={512}
               className="size-7 rounded-lg ring-1 ring-white/10"
             />
-            <span className="u-eyebrow text-bone-400 text-[0.5625rem]">{site.name} · Studio</span>
+            <span className="u-eyebrow text-bone-400 hidden text-[0.5625rem] sm:inline">
+              {site.name} · Studio
+            </span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <nav className="hidden gap-1 sm:flex">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <nav className="flex gap-1">
               <TabButton active={tab === "artikel"} onClick={() => setTab("artikel")}>
                 Artikel
               </TabButton>
@@ -83,9 +85,14 @@ export default function AdminApp({
                 Leads
               </TabButton>
 
-              {/* Not built yet — shown so the shape of the Studio is legible. */}
+              {/* Not built yet — shown on wide screens so the shape of the Studio is
+                  legible. The working tabs above stay visible on a phone, which is
+                  where a lead arriving over WhatsApp will be followed up. */}
               {["Riset", "Media", "Tim"].map((t) => (
-                <span key={t} className="text-bone-700 rounded-full px-3 py-1.5 text-xs">
+                <span
+                  key={t}
+                  className="text-bone-700 hidden rounded-full px-3 py-1.5 text-xs md:inline"
+                >
                   {t}
                 </span>
               ))}

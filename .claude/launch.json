@@ -4,8 +4,32 @@
     {
       "name": "genesis-web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000
+    },
+    {
+      "name": "pages-export",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve-export.mjs"
+      ],
+      "port": 4173,
+      "url": "http://localhost:4173"
+    },
+    {
+      "name": "genesis-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "start",
+        "--",
+        "-p",
+        "3100"
+      ],
+      "port": 3100
     }
   ]
 }

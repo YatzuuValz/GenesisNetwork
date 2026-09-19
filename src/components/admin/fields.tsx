@@ -113,19 +113,17 @@ export function Derived({ value }: { value: string }) {
   );
 }
 
-export type Status = "draft" | "published" | "changed";
+export type Status = "draft" | "published";
 
 export const statusLabel: Record<Status, string> = {
   draft: "Draft",
   published: "Terbit",
-  changed: "Ada perubahan",
 };
 
 export function StatusBadge({ status }: { status: Status }) {
   const tone: Record<Status, string> = {
     draft: "border-white/12 bg-white/[0.04] text-bone-400",
     published: "border-bull/35 bg-bull/10 text-bull",
-    changed: "border-volt-500/40 bg-volt-500/12 text-volt-400",
   };
   return (
     <span
