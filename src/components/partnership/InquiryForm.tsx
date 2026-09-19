@@ -218,12 +218,14 @@ export default function InquiryForm() {
             <WhatsAppGlyph className="size-3.5" />
             Chat langsung
           </a>
-          <a
-            href={`mailto:${site.partnershipEmail}`}
-            className="text-bone-400 hover:text-volt-400 transition-colors"
-          >
-            Kirim email
-          </a>
+          {site.partnershipEmail && (
+            <a
+              href={`mailto:${site.partnershipEmail}`}
+              className="text-bone-400 hover:text-volt-400 transition-colors"
+            >
+              Kirim email
+            </a>
+          )}
         </div>
       </form>
     </div>

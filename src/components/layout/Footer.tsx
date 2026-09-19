@@ -2,6 +2,7 @@ import Image from "@/components/ui/Img";
 import Link from "next/link";
 import { categories, channels, features, site } from "@/data";
 import { Arrow, Bloom } from "@/components/ui/primitives";
+import { waLink } from "@/lib/whatsapp";
 
 /** Category links would land on empty pages while a section is switched off. */
 function buildColumns(hasArticles: boolean) {
@@ -113,10 +114,11 @@ export default function Footer({ hasArticles = false }: { hasArticles?: boolean 
           </div>
 
           <a
-            href={`mailto:${site.partnershipEmail}`}
+            href={site.partnershipEmail ? `mailto:${site.partnershipEmail}` : waLink()}
+            {...(site.partnershipEmail ? {} : { target: "_blank", rel: "noopener noreferrer" })}
             className="group text-bone-300 hover:text-bone-50 inline-flex items-center gap-2 text-sm transition-colors"
           >
-            {site.partnershipEmail}
+            {site.partnershipEmail ?? `WhatsApp ${site.whatsapp}`}
             <Arrow className="transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </div>

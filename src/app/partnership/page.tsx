@@ -271,15 +271,17 @@ export default function PartnershipPage() {
                 </h2>
 
                 <div className="mt-10 space-y-6">
-                  <div className="border-t border-white/10 pt-5">
-                    <div className="u-eyebrow text-bone-600 text-[0.5rem]">Email partnership</div>
-                    <a
-                      href={`mailto:${site.partnershipEmail}`}
-                      className="text-bone-100 hover:text-volt-400 mt-2 block text-sm transition-colors"
-                    >
-                      {site.partnershipEmail}
-                    </a>
-                  </div>
+                  {site.partnershipEmail && (
+                    <div className="border-t border-white/10 pt-5">
+                      <div className="u-eyebrow text-bone-600 text-[0.5rem]">Email partnership</div>
+                      <a
+                        href={`mailto:${site.partnershipEmail}`}
+                        className="text-bone-100 hover:text-volt-400 mt-2 block text-sm transition-colors"
+                      >
+                        {site.partnershipEmail}
+                      </a>
+                    </div>
+                  )}
                   <div className="border-t border-white/10 pt-5">
                     <div className="u-eyebrow text-bone-600 text-[0.5rem]">WhatsApp</div>
                     <a

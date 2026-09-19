@@ -23,8 +23,14 @@ export const site = {
   instagramHandle: "@genesisnetwork.id",
   tiktokHandle: "@genesisnetworkid",
   youtubeHandle: "@GenesisNetworkID",
-  email: "hello@genesisnetwork.id",
-  partnershipEmail: "partnership@genesisnetwork.id",
+  /**
+   * genesisnetwork.id is not a registered domain (NXDOMAIN, checked 19 Sep 2026),
+   * so any address on it bounces. Until Genesis has a working inbox these stay
+   * null and every contact spot offers WhatsApp instead. Put a real address here
+   * and the email links come back everywhere.
+   */
+  email: null as string | null,
+  partnershipEmail: null as string | null,
   /** Deep-link target for the partnership form — see src/lib/whatsapp.ts. */
   whatsapp: WA_DISPLAY,
   city: "Jakarta, Indonesia",

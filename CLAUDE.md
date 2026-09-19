@@ -224,6 +224,11 @@ vague "empowering your journey" copy.
   Don't assume the Studio has every enquiry until the site moves hosts (§8c)
 - No group team photo yet — the founders default panel renders a 2×2 mosaic of
   the four portraits instead
+- **There is no working email.** `genesisnetwork.id` is not a registered domain
+  (NXDOMAIN, checked 19 Sep 2026), so the `hello@` and `partnership@` addresses
+  the site used to show bounced. `site.email` and `site.partnershipEmail` are now
+  `null` and WhatsApp fills every spot they occupied. Set a real address in
+  `site.ts` and the email links return everywhere
 
 **Deliberately removed because it was fabricated:** per-series posting cadence.
 The deck states only *"7 Content / Week"* in total and never breaks it down, but
@@ -419,6 +424,10 @@ Verified by testing, not assumed:
    when one arrives. Email (Resend free tier) or a Telegram bot are both free;
    WhatsApp Cloud API is not, and it would cost a dedicated phone number that
    can no longer be used in the normal WhatsApp app.
+9. **Domain and share previews** — `metadataBase` in `layout.tsx` points at the
+   unregistered `genesisnetwork.id`, and there is no `og:image`, so a link shared
+   on WhatsApp or LinkedIn previews as text only. Fix both once a domain exists:
+   it is the partnership page's first impression when a lead forwards it.
 8. **WhatsApp Business app** — the free app's greeting and away messages give
    an automatic first reply with no infrastructure at all. Worth switching on.
 

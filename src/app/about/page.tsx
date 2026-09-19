@@ -4,6 +4,7 @@ import { audienceStats, founders, seriesList, site } from "@/data";
 import PageHero from "@/components/layout/PageHero";
 import { Arrow, Bloom, ButtonLink, Eyebrow, StatBlock } from "@/components/ui/primitives";
 import Reveal from "@/components/ui/Reveal";
+import { waLink } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -216,10 +217,11 @@ export default function AboutPage() {
               <div className="flex flex-wrap gap-3.5">
                 <ButtonLink href="/partnership#contact">Ajukan kerja sama</ButtonLink>
                 <a
-                  href={`mailto:${site.email}`}
+                  href={site.email ? `mailto:${site.email}` : waLink()}
+                  {...(site.email ? {} : { target: "_blank", rel: "noopener noreferrer" })}
                   className="group text-bone-200 hover:text-bone-50 inline-flex items-center gap-2.5 rounded-full border border-white/14 px-6 py-3 text-sm font-semibold transition-all duration-300 hover:border-white/28 hover:bg-white/[0.05]"
                 >
-                  {site.email}
+                  {site.email ?? "Chat WhatsApp"}
                   <Arrow className="transition-transform duration-300 group-hover:translate-x-1" />
                 </a>
               </div>
