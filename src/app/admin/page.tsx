@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import AdminApp from "@/components/admin/AdminApp";
+import LoginForm from "@/components/admin/LoginForm";
 import { currentUser } from "@/server/auth";
 import { listArticles } from "@/server/articles";
 import { listLeads } from "@/server/leads";
@@ -22,8 +23,12 @@ export const metadata: Metadata = {
 export default async function AdminPage() {
   if (!enabled) notFound();
 
+  // Signed out, the Studio shows its login form in place rather than redirecting
+  // to /admin/login. Behind vinext's page cache on Cloudflare a server redirect
+  // loops until it fails ("Too many redirects", cloudflare/vinext#3243, fix not
+  // yet released) — rendering the form sidesteps it on every host.
   const user = await currentUser();
-  if (!user) redirect("/admin/login");
+  if (!user) return <LoginForm />;
 
   const [articles, leads] = await Promise.all([listArticles(), listLeads()]);
 

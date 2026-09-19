@@ -170,7 +170,6 @@ export async function createArticle(input: ArticleInput, authorName: string): Pr
     ],
   });
 
-  invalidatePublicPages();
   return id;
 }
 
@@ -213,12 +212,14 @@ export async function updateArticle(id: string, input: ArticleInput): Promise<vo
     ],
   });
 
-  invalidatePublicPages();
+  const nextStatus = input.status === undefined ? existing.status : asStatus(input.status);
+  if (existing.status === "published" || nextStatus === "published") invalidatePublicPages();
 }
 
 export async function deleteArticle(id: string): Promise<void> {
+  const existing = await getArticleById(id);
   await db.execute({ sql: "DELETE FROM articles WHERE id = ?", args: [id] });
-  invalidatePublicPages();
+  if (existing?.status === "published") invalidatePublicPages();
 }
 
 /* ------------------------------------------------------------------

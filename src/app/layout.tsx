@@ -58,6 +58,15 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Public pages may be served from Cloudflare's edge cache for up to a day.
+ * Freshness does not rely on this timer: every article save calls
+ * revalidatePath, which purges the affected pages at once. The day is only a
+ * safety net. Without an explicit value vinext cannot tell these pages are
+ * static and marks them no-store, so every reader would run the Worker.
+ */
+export const revalidate = 86400;
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // One query for the whole shell: nav and footer both need to know whether the
   // Artikel section has anything in it yet.
