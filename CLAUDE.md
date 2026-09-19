@@ -424,12 +424,12 @@ Verified by testing, not assumed:
    when one arrives. Email (Resend free tier) or a Telegram bot are both free;
    WhatsApp Cloud API is not, and it would cost a dedicated phone number that
    can no longer be used in the normal WhatsApp app.
+8. **WhatsApp Business app** — the free app's greeting and away messages give
+   an automatic first reply with no infrastructure at all. Worth switching on.
 9. **Domain and share previews** — `metadataBase` in `layout.tsx` points at the
    unregistered `genesisnetwork.id`, and there is no `og:image`, so a link shared
    on WhatsApp or LinkedIn previews as text only. Fix both once a domain exists:
    it is the partnership page's first impression when a lead forwards it.
-8. **WhatsApp Business app** — the free app's greeting and away messages give
-   an automatic first reply with no infrastructure at all. Worth switching on.
 
 ---
 
