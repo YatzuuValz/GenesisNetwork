@@ -105,6 +105,28 @@ Three things in that workflow exist because of real bugs found during setup:
    GitHub doesn't provision the Pages site until a deploy succeeds, so the UI
    toggle and the workflow deadlock each other.
 
+Two more, found after the site had silently stopped deploying for two weeks
+(5 pushes and every scheduled market refresh failed from 6 Sep):
+
+4. **`@emnapi/core` and `@emnapi/runtime` are devDependencies on purpose.**
+   Optional wasm32 builds (sharp, Tailwind's oxide, napi-rs) depend on them.
+   npm 11.6.2 prunes them from the lockfile; every other npm — including CI's
+   npm 10 — then refuses `npm ci` with *"Missing: @emnapi/… from lock file"*.
+   Declaring them directly is the only form that survives a local
+   `npm install`. Don't remove them as "unused".
+5. **`src/server/db.ts` creates its client lazily.** libSQL throws synchronously
+   when a local file's directory is missing; at import time that escaped every
+   try/catch, so CI (which has no `data/`) could not build. The Pages build now
+   reads a database only when `DATABASE_URL` is set explicitly, so a local
+   export and the CI export are the same site.
+
+**After pushing, check the deploy, not the push.** A green `git push` said
+nothing about the fortnight of red builds behind it:
+
+```bash
+curl -s "https://api.github.com/repos/YatzuuValz/GenesisNetwork/actions/runs?per_page=3"
+```
+
 Also: `components/ui/Img.tsx` wraps `next/image` to prefix root-relative sources
 with the base path. `images.unoptimized` bypasses Next's own prefixing, so
 without it every image 404s under `/GenesisNetwork/`.
