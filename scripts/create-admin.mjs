@@ -19,13 +19,48 @@ import { promisify } from "node:util";
 
 const scryptAsync = promisify(scrypt);
 
-const email = (process.env.ADMIN_EMAIL ?? "").trim().toLowerCase();
-const password = process.env.ADMIN_PASSWORD ?? "";
-const name = process.env.ADMIN_NAME ?? email.split("@")[0] ?? "Admin";
+/**
+ * Asks in the terminal when a value isn't in the environment. The password is
+ * read with echo off — typed into a prompt rather than a command line, it never
+ * lands in shell history or on screen.
+ */
+async function ask(question, { hidden = false } = {}) {
+  const { createInterface } = await import("node:readline");
+  const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+  if (hidden) {
+    rl._writeToOutput = (text) => {
+      if (text.startsWith(question)) process.stdout.write(question);
+      else if (text.includes("\n") || text.includes("\r")) process.stdout.write("\n");
+    };
+  }
+  const answer = await new Promise((resolve) => rl.question(question, resolve));
+  rl.close();
+  return answer;
+}
+
+const interactive = process.stdin.isTTY;
+
+let email = (process.env.ADMIN_EMAIL ?? "").trim().toLowerCase();
+if (!email && interactive) email = (await ask("Email: ")).trim().toLowerCase();
+
+let name = process.env.ADMIN_NAME ?? "";
+if (!name && interactive) name = (await ask("Nama tampilan: ")).trim();
+name ||= email.split("@")[0] || "Admin";
+
+let password = process.env.ADMIN_PASSWORD ?? "";
+if (!password && interactive) {
+  password = await ask("Password (tidak terlihat saat diketik): ", { hidden: true });
+  const again = await ask("Ulangi password: ", { hidden: true });
+  if (again !== password) {
+    console.error("Password tidak sama. Tidak ada yang diubah.");
+    process.exit(1);
+  }
+}
 
 if (!email || !password) {
-  console.error("Butuh ADMIN_EMAIL dan ADMIN_PASSWORD.\n");
-  console.error("  ADMIN_EMAIL=kamu@contoh.com ADMIN_PASSWORD='…' node scripts/create-admin.mjs [--d1=local|remote]");
+  console.error("Butuh email dan password.\n");
+  console.error("  node scripts/create-admin.mjs [--d1=local|remote]          (akan ditanya)");
+  console.error("  ADMIN_EMAIL=… ADMIN_PASSWORD='…' node scripts/create-admin.mjs");
   process.exit(1);
 }
 if (password.length < 10) {
